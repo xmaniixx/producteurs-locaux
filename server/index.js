@@ -155,25 +155,29 @@ if (isProduction || distExists) {
     if (req.path.startsWith('/api')) {
       return next();
     }
-    // Si c'est un fichier statique (assets, manifest, etc.), laisser express.static le gérer
-    // Si express.static n'a pas répondu (res.headersSent === false), c'est que le fichier n'existe pas
+    
+    // Si c'est un fichier statique, NE PAS le traiter ici
+    // express.static l'a déjà traité s'il existe
+    // Si res.headersSent est false, c'est que le fichier n'existe pas - retourner 404
     if (req.path.startsWith('/assets/') || 
-        req.path.startsWith('/manifest.json') || 
-        req.path.startsWith('/sw.js') ||
+        req.path === '/manifest.json' || 
+        req.path === '/sw.js' ||
         req.path.startsWith('/icon-') ||
         req.path.endsWith('.js') ||
         req.path.endsWith('.css') ||
         req.path.endsWith('.png') ||
         req.path.endsWith('.jpg') ||
-        req.path.endsWith('.svg')) {
-      // Si le fichier statique n'a pas été servi, passer au gestionnaire d'erreur
+        req.path.endsWith('.svg') ||
+        req.path.endsWith('.json')) {
+      // Si le fichier statique n'a pas été servi par express.static, retourner 404
       if (!res.headersSent) {
-        console.error('❌ Fichier statique non servi:', req.path);
-        return next();
+        return res.status(404).send('File not found');
       }
-      return; // Le fichier a été servi par express.static
+      // Le fichier a été servi, ne rien faire
+      return;
     }
-    // Sinon, servir index.html pour le routing côté client
+    
+    // Pour toutes les autres routes (HTML), servir index.html pour le routing côté client
     const indexPath = join(clientDistPath, 'index.html');
     if (existsSync(indexPath)) {
       res.sendFile(indexPath, (err) => {
