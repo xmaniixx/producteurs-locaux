@@ -80,6 +80,14 @@ const uploadsPath = join(__dirname, '..', 'uploads');
 app.use('/uploads', express.static(uploadsPath));
 console.log('📁 Dossier uploads servi depuis:', uploadsPath);
 
+// Servir les fichiers statiques du client buildé (production uniquement)
+if (process.env.NODE_ENV === 'production') {
+  const clientDistPath = join(__dirname, '..', 'client', 'dist');
+  // Servir les fichiers statiques (CSS, JS, images, etc.)
+  app.use(express.static(clientDistPath));
+  console.log('📦 Fichiers statiques du client servis depuis:', clientDistPath);
+}
+
 // Initialiser la base de données avec gestion d'erreur
 try {
   const db = initDatabase();
@@ -119,9 +127,29 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Serveur fonctionnel !' });
 });
 
+// En production, servir index.html pour toutes les routes qui ne sont pas des routes API
+// Cela permet au routing côté client (React Router) de fonctionner
+if (process.env.NODE_ENV === 'production') {
+  const clientDistPath = join(__dirname, '..', 'client', 'dist');
+  app.get('*', (req, res, next) => {
+    // Si c'est une route API, passer au gestionnaire d'erreur 404
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    // Sinon, servir index.html pour le routing côté client
+    res.sendFile(join(clientDistPath, 'index.html'));
+  });
+}
+
 // Gestion d'erreur globale pour les routes non trouvées (DOIT être après toutes les routes)
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route non trouvée' });
+  // En production, on ne devrait pas arriver ici pour les routes non-API
+  // car elles sont gérées par le bloc ci-dessus
+  if (req.path.startsWith('/api')) {
+    res.status(404).json({ error: 'Route API non trouvée' });
+  } else {
+    res.status(404).json({ error: 'Route non trouvée' });
+  }
 });
 
 // Gestion d'erreur globale pour les erreurs serveur (DOIT être en dernier)
