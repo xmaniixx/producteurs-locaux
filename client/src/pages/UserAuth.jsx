@@ -141,30 +141,30 @@ function UserAuth() {
 
   // Vérifier si l'utilisateur est déjà connecté
   useEffect(() => {
+    const verifierConnexion = async () => {
+      try {
+        const response = await fetch('/api/utilisateur/verifier', {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          // Si l'API n'est pas disponible, rester sur la page de connexion
+          return;
+        }
+        
+        const data = await response.json();
+        
+        if (data.connected) {
+          navigate('/');
+        }
+      } catch (error) {
+        // Si l'API n'existe pas encore, on reste sur la page de connexion
+        // Ne pas bloquer le rendu en cas d'erreur
+      }
+    };
+    
     verifierConnexion();
-  }, []);
-
-  const verifierConnexion = async () => {
-    try {
-      const response = await fetch('/api/utilisateur/verifier', {
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        // Si l'API n'est pas disponible, rester sur la page de connexion
-        return;
-      }
-      
-      const data = await response.json();
-      
-      if (data.connected) {
-        navigate('/');
-      }
-    } catch (error) {
-      // Si l'API n'existe pas encore, on reste sur la page de connexion
-      console.log('API utilisateur non disponible');
-    }
-  };
+  }, [navigate]);
 
   // Calculer la force du mot de passe
   useEffect(() => {
