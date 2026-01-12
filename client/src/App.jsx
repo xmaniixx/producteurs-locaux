@@ -36,22 +36,35 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Vérifier si l'utilisateur est connecté via l'API
-        const response = await fetch('/api/utilisateur/verifier', {
-          credentials: 'include'
-        });
-        const data = await response.json();
+        // Vérifier d'abord le JWT dans localStorage
+        const token = localStorage.getItem('token');
         
-        setIsAuthenticated(data.connected || false);
-        
-        if (!data.connected) {
-          // Si non connecté, rediriger vers la page de connexion
-          navigate('/connexion', { replace: true });
+        if (token) {
+          // Si token présent, on considère l'utilisateur comme authentifié
+          // (le token est créé lors de la connexion)
+          setIsAuthenticated(true);
+        } else {
+          // Pas de token, vérifier la session comme fallback
+          const response = await fetch('/api/utilisateur/verifier', {
+            credentials: 'include'
+          });
+          const data = await response.json();
+          setIsAuthenticated(data.connected || false);
+          
+          if (!data.connected) {
+            // Si non connecté, rediriger vers la page de connexion
+            navigate('/connexion', { replace: true });
+          }
         }
       } catch (error) {
         console.error('Erreur vérification authentification:', error);
-        // En cas d'erreur, rediriger vers connexion par sécurité
-        navigate('/connexion', { replace: true });
+        // Vérifier si on a un token en fallback
+        const token = localStorage.getItem('token');
+        if (token) {
+          setIsAuthenticated(true);
+        } else {
+          navigate('/connexion', { replace: true });
+        }
       } finally {
         setIsChecking(false);
       }
