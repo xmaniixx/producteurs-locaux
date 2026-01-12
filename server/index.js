@@ -93,40 +93,15 @@ if (isProduction || distExists) {
   console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
   console.log('📦 dist existe:', distExists);
   
-  // Servir les fichiers statiques AVANT toutes les autres routes
-  // Utiliser un middleware qui vérifie si le fichier existe avant de servir
-  app.use((req, res, next) => {
-    // Ignorer les routes API
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-    
-    // Pour les fichiers statiques, servir depuis client/dist
-    if (req.path.startsWith('/assets/') || 
-        req.path === '/manifest.json' || 
-        req.path === '/sw.js' ||
-        req.path.startsWith('/icon-') ||
-        (req.path !== '/' && !req.path.includes('.'))) {
-      // Laisser express.static gérer
-      return next();
-    }
-    
-    // Pour tous les autres chemins (incluant les fichiers avec extensions)
-    const filePath = join(clientDistPath, req.path);
-    if (existsSync(filePath)) {
-      return express.static(clientDistPath)(req, res, next);
-    }
-    
-    next();
-  });
-  
-  // Servir les fichiers statiques avec express.static
+  // Servir les fichiers statiques AVANT toutes les routes API
+  // express.static ne servira que les fichiers qui existent
   app.use(express.static(clientDistPath, {
     maxAge: '1y',
     etag: true,
     lastModified: true,
     dotfiles: 'ignore',
-    index: false
+    index: false, // Ne pas servir index.html automatiquement
+    fallthrough: true // Continuer vers le prochain middleware si le fichier n'existe pas
   }));
   
   console.log('✅ Fichiers statiques configurés');
