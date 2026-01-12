@@ -81,31 +81,10 @@ const uploadsPath = join(__dirname, '..', 'uploads');
 app.use('/uploads', express.static(uploadsPath));
 console.log('📁 Dossier uploads servi depuis:', uploadsPath);
 
-// Servir les fichiers statiques du client buildé (production uniquement)
-// Vérifier si on est en production OU si le dossier dist existe
+// Définir le chemin du client dist (utilisé plus tard)
 const clientDistPath = join(__dirname, '..', 'client', 'dist');
 const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
 const distExists = existsSync(clientDistPath);
-
-if (isProduction || distExists) {
-  console.log('📦 Configuration des fichiers statiques...');
-  console.log('📦 Chemin dist:', clientDistPath);
-  console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
-  console.log('📦 dist existe:', distExists);
-  
-  // Servir les fichiers statiques AVANT toutes les routes API
-  // express.static ne servira que les fichiers qui existent
-  app.use(express.static(clientDistPath, {
-    maxAge: '1y',
-    etag: true,
-    lastModified: true,
-    dotfiles: 'ignore',
-    index: false, // Ne pas servir index.html automatiquement
-    fallthrough: true // Continuer vers le prochain middleware si le fichier n'existe pas
-  }));
-  
-  console.log('✅ Fichiers statiques configurés');
-}
 
 // Initialiser la base de données avec gestion d'erreur
 try {
@@ -145,6 +124,26 @@ app.use('/api/test', resetSubscriptionRoutes); // Routes de test (mode développ
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Serveur fonctionnel !' });
 });
+
+// Servir les fichiers statiques du client APRÈS les routes API mais AVANT le catch-all
+// Cela permet aux routes API d'avoir la priorité
+if (isProduction || distExists) {
+  console.log('📦 Configuration des fichiers statiques...');
+  console.log('📦 Chemin dist:', clientDistPath);
+  console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
+  console.log('📦 dist existe:', distExists);
+  
+  app.use(express.static(clientDistPath, {
+    maxAge: '1y',
+    etag: true,
+    lastModified: true,
+    dotfiles: 'ignore',
+    index: false, // Ne pas servir index.html automatiquement
+    fallthrough: false // Renvoyer 404 si le fichier n'existe pas (au lieu de continuer)
+  }));
+  
+  console.log('✅ Fichiers statiques configurés');
+}
 
 // En production, servir index.html pour toutes les routes qui ne sont pas des routes API
 // Cela permet au routing côté client (React Router) de fonctionner
