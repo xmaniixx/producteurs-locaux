@@ -8,6 +8,7 @@
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -81,11 +82,17 @@ app.use('/uploads', express.static(uploadsPath));
 console.log('📁 Dossier uploads servi depuis:', uploadsPath);
 
 // Servir les fichiers statiques du client buildé (production uniquement)
-if (process.env.NODE_ENV === 'production') {
-  const clientDistPath = join(__dirname, '..', 'client', 'dist');
+// Vérifier si on est en production OU si le dossier dist existe
+const clientDistPath = join(__dirname, '..', 'client', 'dist');
+const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
+const distExists = existsSync(clientDistPath);
+
+if (isProduction || distExists) {
   // Servir les fichiers statiques (CSS, JS, images, etc.)
   app.use(express.static(clientDistPath));
   console.log('📦 Fichiers statiques du client servis depuis:', clientDistPath);
+  console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
+  console.log('📦 dist existe:', distExists);
 }
 
 // Initialiser la base de données avec gestion d'erreur
@@ -129,15 +136,20 @@ app.get('/api/test', (req, res) => {
 
 // En production, servir index.html pour toutes les routes qui ne sont pas des routes API
 // Cela permet au routing côté client (React Router) de fonctionner
-if (process.env.NODE_ENV === 'production') {
-  const clientDistPath = join(__dirname, '..', 'client', 'dist');
+if (isProduction || distExists) {
   app.get('*', (req, res, next) => {
     // Si c'est une route API, passer au gestionnaire d'erreur 404
     if (req.path.startsWith('/api')) {
       return next();
     }
     // Sinon, servir index.html pour le routing côté client
-    res.sendFile(join(clientDistPath, 'index.html'));
+    const indexPath = join(clientDistPath, 'index.html');
+    if (existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      console.error('❌ index.html non trouvé dans:', indexPath);
+      next();
+    }
   });
 }
 
