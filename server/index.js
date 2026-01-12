@@ -89,7 +89,20 @@ const distExists = existsSync(clientDistPath);
 
 if (isProduction || distExists) {
   // Servir les fichiers statiques (CSS, JS, images, etc.)
-  app.use(express.static(clientDistPath));
+  // IMPORTANT: Servir AVANT les routes API pour éviter les conflits
+  app.use(express.static(clientDistPath, {
+    maxAge: '1y', // Cache les fichiers statiques pendant 1 an
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, path) => {
+      // Définir les headers appropriés pour les fichiers statiques
+      if (path.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      } else if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css; charset=utf-8');
+      }
+    }
+  }));
   console.log('📦 Fichiers statiques du client servis depuis:', clientDistPath);
   console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
   console.log('📦 dist existe:', distExists);
@@ -136,16 +149,34 @@ app.get('/api/test', (req, res) => {
 
 // En production, servir index.html pour toutes les routes qui ne sont pas des routes API
 // Cela permet au routing côté client (React Router) de fonctionner
+// IMPORTANT: Ce middleware doit être APRÈS les routes API mais AVANT le gestionnaire d'erreur 404
 if (isProduction || distExists) {
   app.get('*', (req, res, next) => {
     // Si c'est une route API, passer au gestionnaire d'erreur 404
     if (req.path.startsWith('/api')) {
       return next();
     }
+    // Si c'est un fichier statique (assets, manifest, etc.), laisser express.static le gérer
+    if (req.path.startsWith('/assets/') || 
+        req.path.startsWith('/manifest.json') || 
+        req.path.startsWith('/sw.js') ||
+        req.path.startsWith('/icon-') ||
+        req.path.endsWith('.js') ||
+        req.path.endsWith('.css') ||
+        req.path.endsWith('.png') ||
+        req.path.endsWith('.jpg') ||
+        req.path.endsWith('.svg')) {
+      return next(); // Laisser express.static gérer ces fichiers
+    }
     // Sinon, servir index.html pour le routing côté client
     const indexPath = join(clientDistPath, 'index.html');
     if (existsSync(indexPath)) {
-      res.sendFile(indexPath);
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error('❌ Erreur lors de l\'envoi de index.html:', err);
+          next(err);
+        }
+      });
     } else {
       console.error('❌ index.html non trouvé dans:', indexPath);
       next();
