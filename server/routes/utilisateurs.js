@@ -97,12 +97,16 @@ router.post('/connexion', async (req, res) => {
   try {
     const { email, mot_de_passe } = req.body;
 
+    console.log('🔐 Tentative de connexion pour:', email);
+
     if (!email || !mot_de_passe) {
+      console.log('❌ Email ou mot de passe manquant');
       return res.status(400).json({ error: 'Email et mot de passe requis' });
     }
 
     // Chercher l'utilisateur dans la base de données
     const utilisateur = db.prepare('SELECT * FROM utilisateurs WHERE email = ?').get(email);
+    console.log('👤 Utilisateur trouvé:', utilisateur ? 'Oui' : 'Non');
     
     // Chercher aussi dans les producteurs (pour gérer le cas où l'email existe dans les deux)
     const producteurAvecEmail = db.prepare('SELECT * FROM producteurs WHERE email = ?').get(email);
@@ -133,14 +137,17 @@ router.post('/connexion', async (req, res) => {
     // Si l'email existe en utilisateur
     // Vérifier le mot de passe
     const passwordMatch = await bcrypt.compare(mot_de_passe, utilisateur.mot_de_passe);
+    console.log('🔑 Mot de passe correct:', passwordMatch ? 'Oui' : 'Non');
     
     if (!passwordMatch) {
+      console.log('❌ Mot de passe incorrect pour:', email);
       return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     }
 
     // Créer la session (pour compatibilité)
     req.session.utilisateurId = utilisateur.id;
     req.session.utilisateurEmail = utilisateur.email;
+    console.log('✅ Session créée pour utilisateur ID:', utilisateur.id);
 
     // Générer un token JWT
     const jwt = await import('jsonwebtoken');
