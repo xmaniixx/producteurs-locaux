@@ -88,41 +88,48 @@ const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_E
 const distExists = existsSync(clientDistPath);
 
 if (isProduction || distExists) {
-  // Servir les fichiers statiques (CSS, JS, images, etc.)
-  // IMPORTANT: Servir AVANT les routes API pour éviter les conflits
-  app.use(express.static(clientDistPath, {
-    maxAge: '1y', // Cache les fichiers statiques pendant 1 an
-    etag: true,
-    lastModified: true,
-    dotfiles: 'ignore',
-    index: false, // Ne pas servir index.html automatiquement
-    setHeaders: (res, path, stat) => {
-      // Définir les headers appropriés pour les fichiers statiques
-      try {
-        if (path.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        } else if (path.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-        }
-      } catch (err) {
-        console.error('❌ Erreur lors de la définition des headers pour:', path, err);
-      }
-    }
-  }));
-  console.log('📦 Fichiers statiques du client servis depuis:', clientDistPath);
+  console.log('📦 Configuration des fichiers statiques...');
+  console.log('📦 Chemin dist:', clientDistPath);
   console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
   console.log('📦 dist existe:', distExists);
   
-  // Middleware de débogage pour les fichiers statiques
+  // Servir les fichiers statiques AVANT toutes les autres routes
+  // Utiliser un middleware qui vérifie si le fichier existe avant de servir
   app.use((req, res, next) => {
-    if (req.path.startsWith('/assets/') || req.path.endsWith('.js') || req.path.endsWith('.css')) {
-      const filePath = join(clientDistPath, req.path);
-      if (!existsSync(filePath)) {
-        console.error('❌ Fichier statique non trouvé:', req.path, '→', filePath);
-      }
+    // Ignorer les routes API
+    if (req.path.startsWith('/api')) {
+      return next();
     }
+    
+    // Pour les fichiers statiques, servir depuis client/dist
+    if (req.path.startsWith('/assets/') || 
+        req.path === '/manifest.json' || 
+        req.path === '/sw.js' ||
+        req.path.startsWith('/icon-') ||
+        (req.path !== '/' && !req.path.includes('.'))) {
+      // Laisser express.static gérer
+      return next();
+    }
+    
+    // Pour tous les autres chemins (incluant les fichiers avec extensions)
+    const filePath = join(clientDistPath, req.path);
+    if (existsSync(filePath)) {
+      return express.static(clientDistPath)(req, res, next);
+    }
+    
     next();
   });
+  
+  // Servir les fichiers statiques avec express.static
+  app.use(express.static(clientDistPath, {
+    maxAge: '1y',
+    etag: true,
+    lastModified: true,
+    dotfiles: 'ignore',
+    index: false
+  }));
+  
+  console.log('✅ Fichiers statiques configurés');
 }
 
 // Initialiser la base de données avec gestion d'erreur
