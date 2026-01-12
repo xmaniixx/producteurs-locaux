@@ -1,0 +1,203 @@
+/* ============================================
+   STYLES PAGE DEVENIR PRODUCTEUR
+   ============================================ */
+
+.become-producer-page {
+  min-height: 100vh;
+  background: var(--beige);
+  padding-top: 70px;
+}
+
+.become-producer-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: var(--espacement-xl);
+}
+
+.become-producer-header {
+  margin-bottom: var(--espacement-xl);
+  text-align: center;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--vert-principal);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--espacement-xs);
+  margin-bottom: var(--espacement-md);
+  transition: color 0.3s ease;
+}
+
+.btn-back:hover {
+  color: var(--vert-pin);
+}
+
+.become-producer-header h1 {
+  color: var(--vert-pin);
+  font-size: 2rem;
+  margin: 0 0 var(--espacement-sm) 0;
+}
+
+.become-producer-header p {
+  color: var(--texte-gris);
+  font-size: 1rem;
+}
+
+.become-producer-form {
+  background: var(--blanc);
+  padding: var(--espacement-xl);
+  border-radius: var(--rayon-grand);
+  box-shadow: var(--ombre-legere);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-xs);
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--vert-pin);
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: var(--espacement-sm);
+  border: 2px solid var(--beige-fonce);
+  border-radius: var(--rayon);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--vert-principal);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group small {
+  font-size: 0.85rem;
+  color: var(--texte-gris);
+  margin-top: -0.5rem;
+}
+
+.btn-primary {
+  padding: var(--espacement-sm) var(--espacement-lg);
+  background: var(--vert-principal);
+  color: var(--blanc);
+  border-radius: var(--rayon);
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  margin-top: var(--espacement-md);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--vert-pin);
+  transform: translateY(-2px);
+  box-shadow: var(--ombre-moyenne);
+}
+
+.btn-primary:disabled {
+  background: var(--texte-gris);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-secondary {
+  padding: var(--espacement-sm) var(--espacement-lg);
+  background: transparent;
+  color: var(--vert-principal);
+  border: 2px solid var(--vert-principal);
+  border-radius: var(--rayon);
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--vert-tres-clair);
+}
+
+.message-erreur {
+  background: #ffebee;
+  color: #c62828;
+  padding: var(--espacement-sm);
+  border-radius: var(--rayon);
+  border-left: 4px solid #c62828;
+  font-size: 0.95rem;
+  margin-bottom: var(--espacement-md);
+}
+
+.message-succes {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: var(--espacement-sm);
+  border-radius: var(--rayon);
+  border-left: 4px solid #2e7d32;
+  font-size: 0.95rem;
+  margin-bottom: var(--espacement-md);
+}
+
+.already-producer {
+  background: var(--blanc);
+  padding: var(--espacement-xl);
+  border-radius: var(--rayon-grand);
+  box-shadow: var(--ombre-legere);
+  text-align: center;
+}
+
+.success-icon,
+.waiting-icon {
+  font-size: 5rem;
+  margin-bottom: var(--espacement-md);
+}
+
+.already-producer h2 {
+  color: var(--vert-pin);
+  margin-bottom: var(--espacement-sm);
+  font-size: 1.8rem;
+}
+
+.already-producer p {
+  color: var(--texte-gris);
+  margin-bottom: var(--espacement-lg);
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .become-producer-container {
+    padding: var(--espacement-md);
+  }
+
+  .become-producer-form {
+    padding: var(--espacement-lg);
+  }
+
+  .become-producer-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+
+

@@ -1,0 +1,350 @@
+/* ============================================
+   STYLES GLOBAUX - Design Terroir & Nature
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Couleurs principales - Palette vert nature */
+  --vert-principal: #00D47E;
+  --vert-pin: #114248;
+  --vert-fonce: #114248;
+  --vert-moyen: #00D47E;
+  --vert-clair: #4AE3A8;
+  --vert-tres-clair: #E6FFF5;
+  --beige: #f5f1eb;
+  --beige-fonce: #e8e0d4;
+  --blanc: #ffffff;
+  --texte-fonce: #2c2c2c;
+  --texte-gris: #666666;
+  
+  /* Espacements */
+  --espacement-xs: 0.5rem;
+  --espacement-sm: 1rem;
+  --espacement-md: 1.5rem;
+  --espacement-lg: 2rem;
+  --espacement-xl: 3rem;
+  
+  /* Bordures */
+  --rayon: 8px;
+  --rayon-grand: 12px;
+  
+  /* Ombres */
+  --ombre-legere: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --ombre-moyenne: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--beige);
+  color: var(--texte-fonce);
+  line-height: 1.6;
+  overflow-x: hidden; /* Empêche le scroll horizontal */
+}
+
+/* Responsive viewport */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent; /* Supprime le highlight au tap sur mobile */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Boutons */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Inputs */
+input, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Liens */
+a {
+  color: var(--vert-moyen);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--vert-fonce);
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--beige-fonce);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vert-moyen);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vert-fonce);
+}
+
+/* ============================================
+   ANIMATIONS CONFETTI (pour WelcomeProAnimation)
+   ============================================ */
+@keyframes confetti {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-confetti {
+  animation: confetti linear infinite;
+}
+
+/* ============================================
+   ANIMATIONS PROFESSIONNELLES
+   ============================================ */
+
+/* Animation de fade-in pour les pages */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+/* Animation de slide-in pour les menus */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Animation de rotation pour les icônes */
+@keyframes rotate-smooth {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+/* Transitions fluides globales */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Amélioration des focus pour l'accessibilité */
+input:focus,
+textarea:focus,
+button:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Popup Leaflet style Airbnb (si utilisé) */
+.custom-popup .leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.custom-popup .leaflet-popup-content {
+  margin: 0;
+}
+
+.custom-popup .leaflet-popup-tip {
+  display: none; /* Masquer la petite flèche */
+}
+
+/* Popup moderne */
+.modern-popup .leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.modern-popup .leaflet-popup-content {
+  margin: 0;
+  width: 340px !important;
+}
+
+.modern-popup .leaflet-popup-tip {
+  display: none;
+}
+
+.modern-popup a.leaflet-popup-close-button {
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #374151;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CSS POPUP RESPONSIVE - Popup de la carte Leaflet
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Popup de base */
+.dolores-popup .leaflet-popup-content-wrapper {
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  max-height: calc(100vh - 120px); /* Limite la hauteur pour ne pas dépasser l'écran */
+  overflow-y: auto; /* Scroll si contenu trop long */
+}
+
+.dolores-popup .leaflet-popup-content {
+  margin: 0;
+  width: 320px !important;
+  max-width: calc(100vw - 40px); /* S'adapte aux petits écrans */
+}
+
+/* Masquer la flèche en bas */
+.dolores-popup .leaflet-popup-tip {
+  display: none;
+}
+
+/* CORRECTION : Bouton fermer TOUJOURS VISIBLE */
+.dolores-popup a.leaflet-popup-close-button {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  font-size: 22px !important;
+  font-weight: bold;
+  color: #1f2937 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000 !important; /* Au-dessus de tout */
+  padding: 0 !important;
+  line-height: 1 !important;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.dolores-popup a.leaflet-popup-close-button:hover {
+  background: white !important;
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* AJUSTEMENT POSITION POPUP en mode petite fenêtre */
+@media (max-height: 800px) {
+  .leaflet-popup {
+    /* Décale le popup vers le bas pour que la croix soit visible */
+    margin-top: 80px !important;
+  }
+  
+  .dolores-popup .leaflet-popup-content-wrapper {
+    max-height: calc(100vh - 180px); /* Réduit encore plus la hauteur */
+  }
+}
+
+/* Mode très petit écran */
+@media (max-width: 640px) {
+  .dolores-popup .leaflet-popup-content {
+    width: calc(100vw - 40px) !important;
+    max-width: 360px !important;
+  }
+  
+  .dolores-popup a.leaflet-popup-close-button {
+    top: 8px !important;
+    right: 8px !important;
+    width: 36px;
+    height: 36px;
+    font-size: 24px !important;
+  }
+}
+
+/* S'assurer que le popup ne dépasse pas en haut */
+.leaflet-popup-content-wrapper {
+  position: relative;
+}
+
+/* Aspect ratio utilities (si Tailwind n'est pas disponible) */
+.aspect-16-9 {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+/* Loading spinner amélioré */
+@keyframes spin-smooth {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin-smooth 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+

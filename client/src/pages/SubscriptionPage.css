@@ -1,0 +1,82 @@
+/* ============================================
+   PAGE GÉRER MON ABONNEMENT
+   ============================================ */
+
+.subscription-page {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.subscription-page-header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.subscription-page-header-content {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .subscription-page-header-content {
+    padding: 1rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .subscription-page-header-content {
+    padding: 1rem 2rem;
+  }
+}
+
+.subscription-page-back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4b5563;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.subscription-page-back-button:hover {
+  color: #111827;
+  background-color: #f9fafb;
+}
+
+.subscription-page-back-button svg {
+  transition: transform 0.2s ease;
+}
+
+.subscription-page-back-button:hover svg {
+  transform: translateX(-4px);
+}
+
+.subscription-page-content {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .subscription-page-content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .subscription-page-content {
+    padding: 2rem 2rem;
+  }
+}
+
+

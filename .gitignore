@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+server/.env
+
+# Database
+database.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Build outputs
+client/dist/
+client/build/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Uploads
+uploads/
+server/uploads/
+
+# Backups
+backups/
+*.backup
+
+# Railway
+.railway/
+
+# Vercel
+.vercel/

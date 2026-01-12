@@ -1,0 +1,84 @@
+/* ============================================
+   MAPLAYER - Styles stricts
+   ============================================
+   position: absolute
+   z-index: 1
+   ============================================ */
+
+#map-layer.map-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  /* Pas de padding, pas de margin, strictement isolé */
+}
+
+.map-layer.erreur-config {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  background: #f5f1eb;
+  color: #114248;
+}
+
+.map-layer.erreur-config h2 {
+  color: #114248;
+  margin-bottom: 1rem;
+}
+
+.map-layer.erreur-config p {
+  margin-bottom: 0.5rem;
+  color: #6b6b6b;
+}
+
+.map-layer.erreur-config code {
+  background: #e8e0d4;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #114248;
+}
+
+/* Skeleton loading - Style Apple */
+.map-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e6e6e6 37%,
+    #f0f0f0 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.2s infinite;
+  z-index: 0;
+}
+
+@keyframes shimmer {
+  0% { 
+    background-position: 100% 0; 
+  }
+  100% { 
+    background-position: -100% 0; 
+  }
+}
+
+/* Map content avec fade-in */
+.map-content {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.map-content.loaded {
+  opacity: 1;
+}
+

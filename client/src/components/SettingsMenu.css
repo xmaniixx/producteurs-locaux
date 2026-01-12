@@ -1,0 +1,229 @@
+/* ============================================
+   MENU PARAMÈTRES - Navigation fluide
+   ============================================ */
+
+.settings-menu-container {
+  position: relative;
+}
+
+/* Bouton Paramètres */
+.settings-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--texte-gris);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 44px;
+  min-width: 120px;
+}
+
+.settings-menu-button:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--texte-fonce);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.settings-menu-button:active {
+  transform: translateY(0);
+}
+
+.settings-menu-button-open {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--vert-fonce);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 212, 126, 0.2);
+}
+
+.settings-menu-button svg:last-child {
+  transition: transform 0.3s ease;
+}
+
+.settings-menu-button-open svg:last-child {
+  transform: rotate(180deg);
+}
+
+.settings-menu-button svg:first-child {
+  transition: transform 0.3s ease;
+}
+
+.settings-menu-button-open svg:first-child {
+  transform: rotate(90deg);
+}
+
+.settings-menu-button-text {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .settings-menu-button-text {
+    display: inline;
+  }
+}
+
+/* Menu déroulant */
+.settings-menu-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 18rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f3f4f6;
+  z-index: 50;
+  transition: all 0.3s ease-out;
+  transform-origin: top right;
+  opacity: 0;
+  transform: scale(0.95) translateY(-8px);
+  pointer-events: none;
+}
+
+.settings-menu-dropdown-open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+/* Header */
+.settings-menu-header {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.settings-menu-header-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #059669;
+}
+
+.settings-menu-header-title {
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.settings-menu-header-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Menu Items */
+.settings-menu-items {
+  padding: 0.5rem;
+}
+
+.settings-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.settings-menu-item:hover {
+  background-color: #f9fafb;
+}
+
+.settings-menu-item-active {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.settings-menu-item-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background-color: #f9fafb;
+}
+
+.settings-menu-item-active .settings-menu-item-icon {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.settings-menu-item-content {
+  flex: 1;
+}
+
+.settings-menu-item-label {
+  font-weight: 500;
+  color: #111827;
+  margin: 0;
+}
+
+.settings-menu-item-arrow {
+  width: 1rem;
+  height: 1rem;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
+  color: #9ca3af;
+}
+
+.settings-menu-item:hover .settings-menu-item-arrow {
+  color: #6b7280;
+}
+
+.settings-menu-item-active .settings-menu-item-arrow {
+  color: inherit;
+}
+
+/* Footer */
+.settings-menu-footer {
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0 0 0.75rem 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.settings-menu-footer-text {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 0;
+}
+
+.settings-menu-footer-link {
+  color: #059669;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.settings-menu-footer-link:hover {
+  color: #047857;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .settings-menu-dropdown {
+    width: calc(100vw - 2rem);
+    right: -1rem;
+  }
+}
+

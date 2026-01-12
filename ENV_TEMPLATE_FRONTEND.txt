@@ -1,0 +1,15 @@
+# ============================================
+# VARIABLES D'ENVIRONNEMENT - FRONTEND (Vite)
+# ============================================
+# INSTRUCTIONS :
+# 1. Copiez ce fichier et renommez-le en .env
+# 2. Remplissez les valeurs ci-dessous (optionnel)
+# 3. ⚠️ Les variables Vite doivent commencer par VITE_
+
+# Clé publique Stripe (optionnelle - pour affichage UI uniquement)
+# Mode test: pk_test_...
+# Mode production: pk_live_...
+# ⚠️ Cette clé peut être exposée côté client (c'est la clé publique)
+VITE_STRIPE_PUBLIC_KEY=
+
+

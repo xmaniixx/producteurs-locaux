@@ -1,0 +1,47 @@
+/* ============================================
+   STYLES GRAPHIQUE CIRCULAIRE
+   ============================================ */
+
+.circular-chart-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: var(--espacement-md) 0;
+}
+
+.circular-chart {
+  transform: rotate(-90deg);
+}
+
+.chart-circle {
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.chart-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--vert-pin);
+  line-height: 1;
+  letter-spacing: -0.5px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.circular-chart-container:hover .chart-number {
+  transform: scale(1.05);
+  color: var(--vert-moyen);
+}
+
+

@@ -1,0 +1,39 @@
+# ============================================
+# VARIABLES D'ENVIRONNEMENT - BACKEND
+# ============================================
+# INSTRUCTIONS :
+# 1. Copiez ce fichier et renommez-le en .env
+# 2. Remplissez les valeurs ci-dessous
+# 3. ⚠️ NE JAMAIS commiter le fichier .env
+
+# Session Secret (générer une clé aléatoire sécurisée)
+SESSION_SECRET=changez_cette_cle_secrete_en_production
+
+# Port du serveur backend
+PORT=3001
+
+# URL du frontend (pour les redirections Stripe)
+FRONTEND_URL=http://localhost:5173
+
+# ============================================
+# STRIPE CONFIGURATION
+# ============================================
+
+# Clé secrète Stripe (trouvable dans Stripe Dashboard > Developers > API keys)
+# Mode test: sk_test_...
+# Mode production: sk_live_...
+# ⚠️ NE JAMAIS commiter cette valeur
+STRIPE_SECRET_KEY=
+
+# Price ID du Plan Pro (créer un produit dans Stripe Dashboard > Products)
+# Format: price_1234567890
+# ⚠️ NE JAMAIS commiter cette valeur
+STRIPE_PRICE_ID_PRO=
+
+# Secret du webhook Stripe (trouvable dans Stripe Dashboard > Developers > Webhooks)
+# Après avoir créé un webhook pointant vers: https://votre-domaine.com/api/stripe/webhook
+# Format: whsec_...
+# ⚠️ NE JAMAIS commiter cette valeur
+STRIPE_WEBHOOK_SECRET=
+
+

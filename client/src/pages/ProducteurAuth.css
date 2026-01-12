@@ -1,0 +1,525 @@
+/* ============================================
+   STYLES PAGES AUTHENTIFICATION
+   ============================================ */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--vert-clair) 0%, var(--vert-moyen) 100%);
+  padding: var(--espacement-lg);
+}
+
+.auth-container {
+  background: var(--blanc);
+  border-radius: var(--rayon-grand);
+  box-shadow: var(--ombre-moyenne);
+  padding: var(--espacement-xl);
+  max-width: 500px;
+  width: 100%;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--espacement-xl);
+}
+
+.auth-header h1 {
+  color: var(--vert-fonce);
+  font-size: 2rem;
+  margin-bottom: var(--espacement-sm);
+}
+
+.auth-header p {
+  color: var(--texte-gris);
+  font-size: 1rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-md);
+}
+
+.form-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-xs);
+}
+
+.form-groupe label {
+  font-weight: 600;
+  color: var(--vert-fonce);
+  font-size: 0.95rem;
+}
+
+.form-groupe input,
+.form-groupe select {
+  padding: var(--espacement-sm);
+  border: 2px solid var(--beige-fonce);
+  border-radius: var(--rayon);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-groupe input:focus,
+.form-groupe select:focus {
+  outline: none;
+  border-color: var(--vert-moyen);
+}
+
+.form-groupe small {
+  font-size: 0.8rem;
+  color: var(--texte-gris);
+  margin-top: -0.5rem;
+}
+
+.btn-auth {
+  padding: var(--espacement-sm) var(--espacement-lg);
+  background: var(--vert-moyen);
+  color: var(--blanc);
+  border-radius: var(--rayon);
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: var(--espacement-sm);
+}
+
+.btn-auth:hover:not(:disabled) {
+  background: var(--vert-fonce);
+  transform: translateY(-2px);
+  box-shadow: var(--ombre-moyenne);
+}
+
+.btn-auth:disabled {
+  background: var(--texte-gris);
+  cursor: not-allowed;
+}
+
+.auth-erreur {
+  background: #ffebee;
+  color: #c62828;
+  padding: var(--espacement-sm);
+  border-radius: var(--rayon);
+  border-left: 4px solid #c62828;
+  font-size: 0.95rem;
+}
+
+.auth-succes {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: var(--espacement-sm);
+  border-radius: var(--rayon);
+  border-left: 4px solid #2e7d32;
+  font-size: 0.95rem;
+}
+
+.auth-footer {
+  margin-top: var(--espacement-xl);
+  text-align: center;
+  padding-top: var(--espacement-md);
+  border-top: 1px solid var(--beige-fonce);
+}
+
+.auth-footer p {
+  margin-bottom: var(--espacement-sm);
+  color: var(--texte-gris);
+}
+
+.auth-footer a {
+  color: var(--vert-moyen);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.lien-accueil {
+  display: inline-block;
+  margin-top: var(--espacement-sm);
+  color: var(--vert-moyen);
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.lien-accueil:hover {
+  color: var(--vert-fonce);
+}
+
+/* Styles pour la page de modification */
+.auth-container {
+  max-width: 700px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-xs);
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--vert-pin);
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: var(--espacement-sm);
+  border: 2px solid var(--beige-fonce);
+  border-radius: var(--rayon);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--vert-principal);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacement-md);
+}
+
+.btn-primary {
+  padding: var(--espacement-sm) var(--espacement-lg);
+  background: var(--vert-principal);
+  color: var(--blanc);
+  border-radius: var(--rayon);
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--vert-pin);
+  transform: translateY(-2px);
+  box-shadow: var(--ombre-moyenne);
+}
+
+.btn-primary:disabled {
+  background: var(--texte-gris);
+  cursor: not-allowed;
+}
+
+.message-erreur {
+  background: #ffebee;
+  color: #c62828;
+  padding: var(--espacement-sm);
+  border-radius: var(--rayon);
+  border-left: 4px solid #c62828;
+  font-size: 0.95rem;
+  margin-bottom: var(--espacement-md);
+}
+
+.link-back {
+  display: inline-block;
+  margin-top: var(--espacement-sm);
+  color: var(--vert-principal);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link-back:hover {
+  color: var(--vert-pin);
+}
+
+/* Popup de succès */
+.success-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--blanc);
+  padding: var(--espacement-xl);
+  border-radius: var(--rayon-grand);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacement-md);
+  animation: popupFadeIn 0.3s ease-out;
+  min-width: 300px;
+  text-align: center;
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.success-icon {
+  font-size: 4rem;
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.success-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--vert-principal);
+}
+
+/* Section Horaires avec accordéon */
+.horaires-section {
+  margin: var(--espacement-lg) 0;
+  border: 2px solid var(--beige-fonce);
+  border-radius: var(--rayon);
+  overflow: hidden;
+  background: var(--beige);
+}
+
+.horaires-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--espacement-md);
+  background: var(--vert-tres-clair);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.horaires-header:hover {
+  background: var(--vert-clair);
+}
+
+.horaires-header h3 {
+  margin: 0;
+  color: var(--vert-pin);
+  font-size: 1.1rem;
+}
+
+.accordion-icon {
+  font-size: 0.9rem;
+  color: var(--vert-pin);
+  transition: transform 0.2s ease;
+}
+
+.horaires-list {
+  padding: var(--espacement-md);
+  background: var(--blanc);
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.horaire-item {
+  margin-bottom: var(--espacement-md);
+  padding: var(--espacement-sm);
+  border-radius: var(--rayon);
+  background: var(--beige);
+  transition: background 0.2s ease;
+}
+
+.horaire-item:hover {
+  background: var(--vert-tres-clair);
+}
+
+.horaire-item:last-child {
+  margin-bottom: 0;
+}
+
+.horaire-day {
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-xs);
+  margin-bottom: var(--espacement-sm);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--vert-pin);
+  min-width: 120px;
+}
+
+.horaire-day input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--vert-principal);
+}
+
+.horaire-times {
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-xs);
+  margin-left: 28px;
+  flex-wrap: wrap;
+}
+
+/* Style iPhone pour les sélecteurs d'horaires */
+.horaire-select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border: 2px solid var(--beige-fonce);
+  border-radius: var(--rayon);
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--blanc);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 12px;
+  transition: border-color 0.3s ease;
+  min-width: 75px;
+  text-align: center;
+}
+
+.horaire-select.heure-select {
+  min-width: 70px;
+}
+
+.horaire-select.minutes-select {
+  min-width: 70px;
+}
+
+.horaire-select:focus {
+  outline: none;
+  border-color: var(--vert-principal);
+}
+
+.horaire-select:hover {
+  border-color: var(--vert-moyen);
+}
+
+.horaire-times span {
+  font-weight: 600;
+  color: var(--texte-gris);
+  white-space: nowrap;
+}
+
+/* Style pour les options du select (compatible mobile) */
+.horaire-select option {
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Section Photos */
+.photos-section {
+  margin-top: var(--espacement-xl);
+  padding-top: var(--espacement-xl);
+  border-top: 2px solid var(--beige-fonce);
+}
+
+.photos-section h2 {
+  color: var(--vert-pin);
+  margin-bottom: var(--espacement-md);
+  font-size: 1.3rem;
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--espacement-md);
+  margin-bottom: var(--espacement-md);
+}
+
+.photo-item-admin {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--rayon);
+  overflow: hidden;
+  border: 2px solid var(--beige-fonce);
+}
+
+.photo-item-admin img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-delete-photo {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 0, 0, 0.8);
+  color: var(--blanc);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.btn-delete-photo:hover {
+  background: rgba(255, 0, 0, 1);
+  transform: scale(1.1);
+}
+
+.add-photo-form {
+  display: flex;
+  gap: var(--espacement-sm);
+  align-items: flex-start;
+}
+
+.add-photo-form input {
+  flex: 1;
+  padding: var(--espacement-sm);
+  border: 2px solid var(--beige-fonce);
+  border-radius: var(--rayon);
+  font-size: 1rem;
+}
+
+.add-photo-form button {
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .auth-container {
+    padding: var(--espacement-md);
+  }
+
+  .auth-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .add-photo-form {
+    flex-direction: column;
+  }
+
+  .add-photo-form input,
+  .add-photo-form button {
+    width: 100%;
+  }
+}
+

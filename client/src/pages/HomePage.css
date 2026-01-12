@@ -1,0 +1,620 @@
+/* ============================================
+   STYLES PAGE D'ACCUEIL - Design Professionnel
+   ============================================ */
+
+/* ============================================
+   ARCHITECTURE À 2 LAYERS SÉPARÉS
+   ============================================ */
+
+.app-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  /* Empêche le zoom sur iOS */
+  touch-action: pan-x pan-y;
+}
+
+/* Les styles MapLayer sont dans MapLayer.css */
+/* Les styles UiLayer sont dans UiLayer.css */
+
+/* Header simplifié (juste logo) - Dans UI Layer */
+.app-header-simple {
+  position: absolute; /* Absolute car dans un parent fixed */
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--blanc);
+  box-shadow: var(--ombre-legere);
+  border-bottom: 2px solid var(--vert-tres-clair);
+  height: 50px;
+  pointer-events: auto; /* Réactiver les événements pour le header */
+}
+
+.app-header-simple .header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8px var(--espacement-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.app-header-simple .header-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-xs);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.app-header-simple .header-logo:hover {
+  transform: scale(1.05);
+}
+
+.app-header-simple .logo-icon {
+  font-size: 1.5rem;
+}
+
+.app-header-simple .logo-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--vert-pin);
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .app-header-simple .logo-text {
+    display: inline;
+  }
+}
+
+/* Section Recherche fine et épurée - Toujours visible */
+.section-recherche {
+  position: fixed;
+  top: 50px; /* Positionner sous le Header simplifié */
+  left: 0;
+  right: 0;
+  z-index: 10000 !important; /* Au-dessus de la carte Google Maps */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  pointer-events: auto !important; /* S'assurer que les clics fonctionnent */
+  isolation: isolate; /* Créer un nouveau contexte de stacking */
+  /* Forcer un nouveau contexte de stacking pour être au-dessus de la carte */
+  /* Note: transform supprimé pour éviter de casser position: fixed */
+}
+
+.recherche-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  position: relative;
+  z-index: 10001;
+  pointer-events: auto;
+}
+
+.recherche-inputs {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+  z-index: 10002;
+  pointer-events: auto;
+}
+
+.input-groupe {
+  flex: 1;
+  display: flex;
+}
+
+.input-ville {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid var(--beige-fonce);
+  border-radius: 30px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--blanc);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.input-ville:focus {
+  outline: none;
+  border-color: var(--vert-principal);
+  box-shadow: 0 2px 12px rgba(0, 212, 126, 0.15);
+}
+
+.input-ville::placeholder {
+  color: var(--texte-gris);
+}
+
+.select-rayon {
+  padding: 12px 20px;
+  border: 2px solid var(--beige-fonce);
+  border-radius: 30px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--blanc);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300D47E' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 45px;
+}
+
+.select-rayon:focus {
+  outline: none;
+  border-color: var(--vert-principal);
+  box-shadow: 0 2px 12px rgba(0, 212, 126, 0.15);
+}
+
+.btn-rechercher {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: var(--vert-principal);
+  color: var(--blanc);
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 212, 126, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-rechercher:hover:not(:disabled) {
+  background: var(--vert-pin);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(17, 66, 72, 0.4);
+}
+
+.btn-rechercher:disabled {
+  background: var(--texte-gris);
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: scale(1);
+}
+
+/* Bouton producteur dans la barre de recherche */
+.btn-producteur {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: var(--vert-principal);
+  color: var(--blanc);
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid var(--vert-principal);
+  box-shadow: 0 2px 8px rgba(0, 212, 126, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-producteur:hover {
+  background: var(--vert-pin);
+  color: var(--blanc);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(17, 66, 72, 0.3);
+}
+
+/* ============================================
+   MENU PARAMÈTRES - SOLUTION PROPRE ET DURABLE
+   ============================================ */
+
+/* Container du bouton paramètres - Position fixe en haut à droite - Dans UI Layer */
+.search-settings-button-fixed {
+  position: absolute !important; /* Absolute car dans un parent fixed */
+  top: 16px !important;
+  right: 16px !important;
+  pointer-events: auto !important; /* Réactiver les événements pour le bouton */
+  isolation: isolate;
+  z-index: 10000 !important; /* S'assurer qu'il est au-dessus de tout */
+  display: block !important; /* S'assurer qu'il est visible */
+  visibility: visible !important;
+}
+
+/* Bouton paramètres */
+.btn-parametres-search {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--vert-tres-clair);
+  border: 2px solid var(--vert-principal);
+  font-size: 1.5rem;
+  cursor: pointer !important;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 212, 126, 0.3);
+  min-width: 48px;
+  position: relative;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+.btn-parametres-search:hover,
+.btn-parametres-search:focus {
+  background: var(--vert-principal) !important;
+  transform: rotate(90deg) scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(17, 66, 72, 0.4) !important;
+  outline: none;
+}
+
+.btn-parametres-search:active {
+  transform: rotate(90deg) scale(0.95) !important;
+}
+
+/* Menu déroulant - Position fixe sous le bouton - Dans UI Layer */
+.dropdown-menu-search-fixed {
+  position: absolute !important; /* Absolute car dans un parent fixed */
+  top: 72px !important; /* 16px (top bouton) + 48px (hauteur bouton) + 8px (marge) */
+  right: 16px !important;
+  background: var(--blanc);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-moyenne);
+  min-width: 200px;
+  padding: var(--espacement-xs);
+  animation: slideDown 0.3s ease-out;
+  pointer-events: auto !important; /* Réactiver les événements pour le menu */
+  isolation: isolate;
+}
+
+/* Ancien style pour compatibilité - sera supprimé si plus utilisé */
+.search-settings-button {
+  position: relative;
+  z-index: 10001 !important;
+  pointer-events: auto !important;
+  isolation: isolate;
+  cursor: pointer;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.dropdown-menu-search {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: var(--blanc);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-moyenne);
+  min-width: 200px;
+  padding: var(--espacement-xs);
+  animation: slideDown 0.3s ease-out;
+  z-index: 10003 !important;
+  pointer-events: auto !important;
+  isolation: isolate;
+}
+
+.dropdown-menu-search .dropdown-item {
+  width: 100%;
+  padding: var(--espacement-sm) var(--espacement-md);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-sm);
+  font-size: 1rem;
+  color: var(--texte-fonce);
+  transition: all 0.2s ease;
+  border-radius: var(--rayon-xs);
+}
+
+.dropdown-menu-search .dropdown-item:hover {
+  background: var(--vert-tres-clair);
+  color: var(--vert-pin);
+}
+
+.dropdown-menu-search .dropdown-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.dropdown-menu-search .dropdown-divider {
+  height: 1px;
+  background: var(--beige-fonce);
+  margin: var(--espacement-xs) 0;
+}
+
+/* Message d'erreur dans la section recherche */
+.section-recherche .message-erreur {
+  margin-top: 12px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: var(--blanc);
+  padding: 12px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(255, 107, 107, 0.3);
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-sm);
+  animation: slideDown 0.3s ease-out;
+}
+
+.erreur-icon {
+  font-size: 1.25rem;
+}
+
+.erreur-text {
+  flex: 1;
+}
+
+.btn-fermer-erreur {
+  background: transparent;
+  border: none;
+  color: var(--blanc);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.btn-fermer-erreur:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Info producteurs */
+/* Info producteurs - Dans UI Layer */
+.info-producteurs {
+  position: absolute; /* Absolute car dans un parent fixed */
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto; /* Réactiver les événements */
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  padding: 12px 24px;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+  color: var(--vert-pin);
+  border: 2px solid var(--vert-principal);
+  font-size: 0.9rem;
+}
+
+.info-producteurs.clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.info-producteurs.clickable:hover {
+  background: rgba(0, 212, 126, 0.1);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 212, 126, 0.25);
+}
+
+/* Ajuster la position du compteur si une fiche est ouverte - géré via className */
+.info-producteurs.with-card {
+  bottom: calc(50vh + 20px);
+}
+
+.info-hint {
+  font-size: 0.875rem;
+  font-weight: normal;
+  opacity: 0.7;
+  margin-left: 0.5rem;
+}
+
+
+/* Message d'erreur de configuration */
+.erreur-config {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--espacement-lg);
+  text-align: center;
+  background: var(--beige);
+}
+
+.erreur-config h2 {
+  color: var(--vert-fonce);
+  margin-bottom: var(--espacement-md);
+}
+
+.erreur-config p {
+  margin-bottom: var(--espacement-sm);
+  color: var(--texte-gris);
+}
+
+.erreur-config code {
+  background: var(--beige-fonce);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  color: var(--vert-fonce);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - Tous écrans
+   ============================================ */
+
+/* Tablette (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .recherche-container {
+    max-width: 90%;
+    padding: 14px 18px;
+  }
+
+  .recherche-inputs {
+    gap: 10px;
+  }
+
+  .input-ville {
+    font-size: 0.95rem;
+    padding: 10px 18px;
+  }
+
+  .select-rayon {
+    font-size: 0.95rem;
+    padding: 10px 18px;
+  }
+
+  .btn-rechercher,
+  .btn-producteur,
+  .btn-parametres-search {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .info-producteurs {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+  }
+}
+
+/* Mobile (max 768px) */
+@media (max-width: 768px) {
+  .section-recherche {
+    padding: 12px;
+  }
+
+  .recherche-container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .recherche-inputs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .input-groupe {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+
+  .input-ville {
+    font-size: 16px; /* Évite le zoom sur iOS */
+    padding: 14px 18px;
+  }
+
+  .select-rayon {
+    flex: 1 1 auto;
+    min-width: 100px;
+    font-size: 16px;
+    padding: 14px 40px 14px 18px;
+  }
+
+  .btn-rechercher {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .btn-producteur,
+  .btn-parametres-search {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .info-producteurs {
+    bottom: 80px;
+    left: 10px;
+    right: 10px;
+    transform: translateX(0);
+    font-size: 0.85rem;
+    padding: 10px 16px;
+    max-width: calc(100% - 20px);
+  }
+
+  .message-erreur {
+    font-size: 0.85rem;
+    padding: 10px 14px;
+  }
+}
+
+/* Petit mobile (max 480px) */
+@media (max-width: 480px) {
+  .section-recherche {
+    padding: 10px;
+  }
+
+  .recherche-inputs {
+    gap: 6px;
+  }
+
+  .input-ville,
+  .select-rayon {
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+
+  .select-rayon {
+    padding-right: 38px;
+  }
+
+  .btn-rechercher,
+  .btn-producteur,
+  .btn-parametres-search {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .info-producteurs {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    bottom: 70px;
+  }
+
+  .info-producteurs.with-card {
+    bottom: calc(50vh + 10px);
+  }
+}
+
+/* Grand écran (min 1440px) */
+@media (min-width: 1440px) {
+  .recherche-container {
+    max-width: 700px;
+  }
+
+  .recherche-inputs {
+    gap: 16px;
+  }
+
+  .input-ville,
+  .select-rayon {
+    font-size: 1.05rem;
+    padding: 14px 24px;
+  }
+}
