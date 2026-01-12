@@ -36,7 +36,7 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Vérifier d'abord le JWT dans localStorage (priorité)
+        // Vérifier d'abord le JWT dans localStorage (simple et efficace)
         const token = localStorage.getItem('token');
         
         if (token) {
@@ -46,31 +46,25 @@ function ProtectedRoute({ children }) {
           return;
         }
         
-        // Pas de token, vérifier la session comme fallback
-        try {
-          const response = await fetch('/api/utilisateur/verifier', {
-            credentials: 'include'
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setIsAuthenticated(data.connected || false);
-            
-            if (!data.connected) {
-              navigate('/connexion', { replace: true });
-            }
-          } else {
-            setIsAuthenticated(false);
-            navigate('/connexion', { replace: true });
-          }
-        } catch (fetchError) {
-          console.error('Erreur vérification session:', fetchError);
-          setIsAuthenticated(false);
+        // Pas de token, vérifier la session
+        const response = await fetch('/api/utilisateur/verifier', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        setIsAuthenticated(data.connected || false);
+        
+        if (!data.connected) {
           navigate('/connexion', { replace: true });
         }
       } catch (error) {
         console.error('Erreur vérification authentification:', error);
-        setIsAuthenticated(false);
-        navigate('/connexion', { replace: true });
+        // En cas d'erreur, vérifier le token comme fallback
+        const token = localStorage.getItem('token');
+        if (token) {
+          setIsAuthenticated(true);
+        } else {
+          navigate('/connexion', { replace: true });
+        }
       } finally {
         setIsChecking(false);
       }
