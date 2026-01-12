@@ -38,22 +38,47 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [
       process.env.FRONTEND_URL,
       process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-      'https://producteurs-locaux.vercel.app' // Remplacez par votre domaine
+      'https://producteurs-locaux.vercel.app', // Remplacez par votre domaine
+      'https://producteurs-locaux.onrender.com', // URL Render
+      'https://*.onrender.com' // Toutes les sous-domaines Render
     ].filter(Boolean)
   : ['http://localhost:5173'];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Autoriser les requêtes sans origine (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
+    // Autoriser les requêtes sans origine (mobile apps, curl, Postman, etc.)
+    if (!origin) {
+      console.log('🌐 Requête sans origine (allowed)');
+      return callback(null, true);
+    }
     
-    if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
+    // En développement, autoriser toutes les origines
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    
+    // Vérifier si l'origine est dans la liste autorisée
+    const isAllowed = allowedOrigins.some(allowed => {
+      // Support des patterns comme *.onrender.com
+      if (allowed.includes('*')) {
+        const pattern = allowed.replace('*.', '');
+        return origin.endsWith(pattern);
+      }
+      return origin === allowed;
+    });
+    
+    if (isAllowed || allowedOrigins.includes(origin)) {
+      console.log('✅ Origine autorisée:', origin);
       callback(null, true);
     } else {
+      console.log('❌ Origine non autorisée:', origin);
+      console.log('   Origines autorisées:', allowedOrigins);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Webhook Stripe - DOIT être AVANT express.json() car Stripe envoie raw body
