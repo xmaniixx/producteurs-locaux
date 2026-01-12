@@ -133,28 +133,16 @@ if (isProduction || distExists) {
   console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
   console.log('📦 dist existe:', distExists);
   
-  // Servir les fichiers statiques avec gestion d'erreur améliorée
-  app.use((req, res, next) => {
-    // Ignorer les routes API
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-    // Servir les fichiers statiques avec express.static
-    express.static(clientDistPath, {
-      maxAge: '1y',
-      etag: true,
-      lastModified: true,
-      dotfiles: 'ignore',
-      index: false, // Ne pas servir index.html automatiquement
-      fallthrough: true // Continuer au middleware suivant si le fichier n'existe pas
-    })(req, res, (err) => {
-      // Si erreur lors de l'envoi du fichier, passer au middleware suivant
-      if (err && err.code !== 'ENOENT') {
-        console.error('❌ Erreur lors de l\'envoi du fichier statique:', req.path, err.message);
-      }
-      next();
-    });
-  });
+  // Servir les fichiers statiques avec express.static
+  // fallthrough: true permet de continuer au middleware suivant si le fichier n'existe pas
+  app.use(express.static(clientDistPath, {
+    maxAge: '1y',
+    etag: true,
+    lastModified: true,
+    dotfiles: 'ignore',
+    index: false, // Ne pas servir index.html automatiquement
+    fallthrough: true // Continuer au middleware suivant si le fichier n'existe pas
+  }));
   
   console.log('✅ Fichiers statiques configurés');
 }
