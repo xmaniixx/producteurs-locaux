@@ -94,18 +94,35 @@ if (isProduction || distExists) {
     maxAge: '1y', // Cache les fichiers statiques pendant 1 an
     etag: true,
     lastModified: true,
-    setHeaders: (res, path) => {
+    dotfiles: 'ignore',
+    index: false, // Ne pas servir index.html automatiquement
+    setHeaders: (res, path, stat) => {
       // Définir les headers appropriés pour les fichiers statiques
-      if (path.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      } else if (path.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css; charset=utf-8');
+      try {
+        if (path.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        } else if (path.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
+        }
+      } catch (err) {
+        console.error('❌ Erreur lors de la définition des headers pour:', path, err);
       }
     }
   }));
   console.log('📦 Fichiers statiques du client servis depuis:', clientDistPath);
   console.log('📦 NODE_ENV:', process.env.NODE_ENV || 'non défini');
   console.log('📦 dist existe:', distExists);
+  
+  // Middleware de débogage pour les fichiers statiques
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/assets/') || req.path.endsWith('.js') || req.path.endsWith('.css')) {
+      const filePath = join(clientDistPath, req.path);
+      if (!existsSync(filePath)) {
+        console.error('❌ Fichier statique non trouvé:', req.path, '→', filePath);
+      }
+    }
+    next();
+  });
 }
 
 // Initialiser la base de données avec gestion d'erreur
@@ -157,6 +174,7 @@ if (isProduction || distExists) {
       return next();
     }
     // Si c'est un fichier statique (assets, manifest, etc.), laisser express.static le gérer
+    // Si express.static n'a pas répondu (res.headersSent === false), c'est que le fichier n'existe pas
     if (req.path.startsWith('/assets/') || 
         req.path.startsWith('/manifest.json') || 
         req.path.startsWith('/sw.js') ||
@@ -166,7 +184,12 @@ if (isProduction || distExists) {
         req.path.endsWith('.png') ||
         req.path.endsWith('.jpg') ||
         req.path.endsWith('.svg')) {
-      return next(); // Laisser express.static gérer ces fichiers
+      // Si le fichier statique n'a pas été servi, passer au gestionnaire d'erreur
+      if (!res.headersSent) {
+        console.error('❌ Fichier statique non servi:', req.path);
+        return next();
+      }
+      return; // Le fichier a été servi par express.static
     }
     // Sinon, servir index.html pour le routing côté client
     const indexPath = join(clientDistPath, 'index.html');
