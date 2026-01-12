@@ -90,13 +90,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configuration des sessions pour garder les utilisateurs connectés
+// En production sur Render, frontend et backend sont sur le même domaine
+// donc on utilise 'lax' au lieu de 'none' pour sameSite
+const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
   secret: process.env.SESSION_SECRET || 'changez_cette_cle_secrete',
   resave: false,
   saveUninitialized: false,
+  name: 'sessionId', // Nom du cookie de session
   cookie: { 
-    secure: process.env.NODE_ENV === 'production', // true en production avec HTTPS
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: isProduction, // true en production avec HTTPS
+    sameSite: isProduction ? 'lax' : 'lax', // 'lax' car frontend et backend sont sur le même domaine
+    httpOnly: true, // Empêche l'accès JavaScript au cookie (sécurité)
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 jours
   }
 }));
