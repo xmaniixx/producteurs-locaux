@@ -36,38 +36,41 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Vérifier d'abord le JWT dans localStorage
+        // Vérifier d'abord le JWT dans localStorage (priorité)
         const token = localStorage.getItem('token');
         
         if (token) {
           // Si token présent, on considère l'utilisateur comme authentifié
-          // (le token est créé lors de la connexion)
           setIsAuthenticated(true);
           setIsChecking(false);
           return;
         }
         
         // Pas de token, vérifier la session comme fallback
-        const response = await fetch('/api/utilisateur/verifier', {
-          credentials: 'include'
-        });
-        const data = await response.json();
-        const isConnected = data.connected || false;
-        setIsAuthenticated(isConnected);
-        
-        if (!isConnected) {
-          // Si non connecté, rediriger vers la page de connexion
+        try {
+          const response = await fetch('/api/utilisateur/verifier', {
+            credentials: 'include'
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setIsAuthenticated(data.connected || false);
+            
+            if (!data.connected) {
+              navigate('/connexion', { replace: true });
+            }
+          } else {
+            setIsAuthenticated(false);
+            navigate('/connexion', { replace: true });
+          }
+        } catch (fetchError) {
+          console.error('Erreur vérification session:', fetchError);
+          setIsAuthenticated(false);
           navigate('/connexion', { replace: true });
         }
       } catch (error) {
         console.error('Erreur vérification authentification:', error);
-        // Vérifier si on a un token en fallback
-        const token = localStorage.getItem('token');
-        if (token) {
-          setIsAuthenticated(true);
-        } else {
-          navigate('/connexion', { replace: true });
-        }
+        setIsAuthenticated(false);
+        navigate('/connexion', { replace: true });
       } finally {
         setIsChecking(false);
       }
