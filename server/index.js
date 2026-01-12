@@ -92,7 +92,7 @@ app.use(express.urlencoded({ extended: true }));
 // Configuration des sessions pour garder les utilisateurs connectés
 // En production sur Render, frontend et backend sont sur le même domaine
 // donc on utilise 'lax' au lieu de 'none' pour sameSite
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
 app.use(session({
   secret: process.env.SESSION_SECRET || 'changez_cette_cle_secrete',
   resave: false,
@@ -113,7 +113,6 @@ console.log('📁 Dossier uploads servi depuis:', uploadsPath);
 
 // Définir le chemin du client dist (utilisé plus tard)
 const clientDistPath = join(__dirname, '..', 'client', 'dist');
-const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
 const distExists = existsSync(clientDistPath);
 
 // Initialiser la base de données avec gestion d'erreur
