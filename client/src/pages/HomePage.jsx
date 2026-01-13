@@ -72,7 +72,20 @@ function HomePage() {
     console.log('🏠 HomePage - useEffect verifierConnexion déclenché');
     const verifierConnexion = async () => {
       console.log('🏠 HomePage - Début verifierConnexion');
+      
+      // Vérifier d'abord le token dans localStorage (plus rapide)
+      const token = localStorage.getItem('token');
+      console.log('🏠 HomePage - Token localStorage:', token ? '✅ Présent' : '❌ Absent');
+      
+      if (token) {
+        console.log('🏠 HomePage - Token trouvé, utilisateur connecté automatiquement');
+        setUtilisateurConnecte(true);
+        return;
+      }
+      
+      // Pas de token, vérifier la session via API
       try {
+        console.log('🏠 HomePage - Pas de token, vérification session API');
         const response = await fetch('/api/utilisateur/verifier', {
           credentials: 'include'
         });
@@ -80,6 +93,14 @@ function HomePage() {
           status: response.status, 
           ok: response.ok 
         });
+        
+        // Vérifier si la réponse est OK avant de parser JSON
+        if (!response.ok) {
+          console.log('❌ HomePage - API retourne erreur, utilisateur non connecté');
+          setUtilisateurConnecte(false);
+          return;
+        }
+        
         const data = await response.json();
         console.log('🏠 HomePage - Données API:', data);
         const connected = data.connected || false;
@@ -104,7 +125,15 @@ function HomePage() {
         }
       } catch (error) {
         console.error('❌ HomePage - Erreur vérification connexion:', error);
-        setUtilisateurConnecte(false);
+        // En cas d'erreur, vérifier le token comme fallback
+        const token = localStorage.getItem('token');
+        if (token) {
+          console.log('🏠 HomePage - Erreur mais token présent, authentification fallback');
+          setUtilisateurConnecte(true);
+        } else {
+          console.log('❌ HomePage - Erreur et pas de token, utilisateur non connecté');
+          setUtilisateurConnecte(false);
+        }
       }
     };
     verifierConnexion();
