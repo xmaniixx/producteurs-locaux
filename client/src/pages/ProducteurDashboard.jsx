@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { fetchAPI, post } from '../api/api';
 import CircularChart from '../components/CircularChart';
 import SettingsMenu from '../components/SettingsMenu';
 import './ProducteurDashboard.css';
@@ -250,13 +251,7 @@ function PaywallModal({ isOpen, onClose, firstName }) {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/stripe/create-checkout-session', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await post('/api/stripe/create-checkout-session', {});
       
       if (!response.ok) {
         const error = await response.json();
@@ -396,9 +391,7 @@ function ProducteurDashboard() {
   const chargerDonnees = async () => {
     try {
       // Vérifier la connexion utilisateur
-      const responseAuth = await fetch('/api/utilisateur/verifier', {
-        credentials: 'include'
-      });
+      const responseAuth = await fetchAPI('/api/utilisateur/verifier');
       const dataAuth = await responseAuth.json();
 
       if (!dataAuth.connected) {
@@ -408,9 +401,7 @@ function ProducteurDashboard() {
       }
 
       // Vérifier le badge producteur (statut producteur)
-      const responseStatut = await fetch('/api/utilisateur/statut-producteur', {
-        credentials: 'include'
-      });
+      const responseStatut = await fetchAPI('/api/utilisateur/statut-producteur');
       const dataStatut = await responseStatut.json();
 
       if (!dataStatut.est_producteur) {
@@ -429,9 +420,7 @@ function ProducteurDashboard() {
       }
 
       // Récupérer les infos producteur
-      const responseProducteur = await fetch(`/api/producteurs/${producteurId}`, {
-        credentials: 'include'
-      });
+      const responseProducteur = await fetchAPI(`/api/producteurs/${producteurId}`);
       
       if (!responseProducteur.ok) {
         console.error('Erreur récupération producteur');
@@ -444,9 +433,7 @@ function ProducteurDashboard() {
 
       // Récupérer le prénom de l'utilisateur pour personnaliser le message
       try {
-        const responseUser = await fetch('/api/utilisateur/verifier', {
-          credentials: 'include'
-        });
+        const responseUser = await fetchAPI('/api/utilisateur/verifier');
         if (responseUser.ok) {
           const userData = await responseUser.json();
           // Extraire le prénom depuis l'email ou utiliser une valeur par défaut
@@ -467,9 +454,7 @@ function ProducteurDashboard() {
       let currentPlan = 'free';
       let subscriptionData = null; // Stocker les données pour les utiliser plus tard
       try {
-        const responseSub = await fetch('/api/stripe/subscription', {
-          credentials: 'include'
-        });
+        const responseSub = await fetchAPI('/api/stripe/subscription');
         if (responseSub.ok) {
           const subData = await responseSub.json();
           console.log('📊 Subscription Info RAW:', JSON.stringify(subData, null, 2));
@@ -506,9 +491,7 @@ function ProducteurDashboard() {
       // Charger les statistiques avec la période sélectionnée
       const url = `/api/stats/producteur/${producteurId}?periode=${periode}`;
       try {
-        const responseStats = await fetch(url, {
-          credentials: 'include'
-        });
+        const responseStats = await fetchAPI(url);
 
         if (responseStats.status === 403) {
           // Ne pas écraser currentPlan si on a déjà déterminé qu'il est Pro via subscriptionInfo.isActive
@@ -598,9 +581,7 @@ function ProducteurDashboard() {
       // Charger les tranches d'âge (UNIQUEMENT si plan Pro)
       try {
         const urlTranches = `/api/stats/producteur/${producteurId}/tranches-age?periode=${periode}`;
-        const responseTranches = await fetch(urlTranches, {
-          credentials: 'include'
-        });
+        const responseTranches = await fetchAPI(urlTranches);
         
         if (responseTranches.ok) {
           const dataTranches = await responseTranches.json();
@@ -620,9 +601,7 @@ function ProducteurDashboard() {
       // Charger les top heures depuis l'API (UNIQUEMENT si plan Pro)
       try {
         const urlTopHeures = `/api/stats/producteur/${producteurId}/top-heures?periode=${periode}`;
-        const responseTopHeures = await fetch(urlTopHeures, {
-          credentials: 'include'
-        });
+        const responseTopHeures = await fetchAPI(urlTopHeures);
         
         if (responseTopHeures.ok) {
           const dataTopHeures = await responseTopHeures.json();
@@ -642,9 +621,7 @@ function ProducteurDashboard() {
       // Charger la comparaison période précédente depuis l'API (UNIQUEMENT si plan Pro)
       try {
         const urlComparaison = `/api/stats/producteur/${producteurId}/comparaison?periode=${periode}`;
-        const responseComparaison = await fetch(urlComparaison, {
-          credentials: 'include'
-        });
+        const responseComparaison = await fetchAPI(urlComparaison);
         
         if (responseComparaison.ok) {
           const dataComparaison = await responseComparaison.json();
@@ -664,9 +641,7 @@ function ProducteurDashboard() {
       // Charger les visiteurs par jour depuis l'API (UNIQUEMENT si plan Pro)
       try {
         const urlVisiteursJour = `/api/stats/producteur/${producteurId}/visiteurs-jour?periode=${periode}`;
-        const responseVisiteursJour = await fetch(urlVisiteursJour, {
-          credentials: 'include'
-        });
+        const responseVisiteursJour = await fetchAPI(urlVisiteursJour);
         
         if (responseVisiteursJour.ok) {
           const dataVisiteursJour = await responseVisiteursJour.json();
@@ -692,13 +667,8 @@ function ProducteurDashboard() {
 
   const handleCancelSubscription = async () => {
     try {
-      const response = await fetch('/api/stripe/cancel-subscription', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ immediate: false }),
+      const response = await post('/api/stripe/cancel-subscription', {
+        immediate: false
       });
 
       if (!response.ok) {
@@ -716,9 +686,7 @@ function ProducteurDashboard() {
       setShowCancelModal(false);
       
       // Recharger les informations d'abonnement
-      const responseSub = await fetch('/api/stripe/subscription', {
-        credentials: 'include'
-      });
+      const responseSub = await fetchAPI('/api/stripe/subscription');
       if (responseSub.ok) {
         const subData = await responseSub.json();
         setSubscriptionInfo(subData);
@@ -745,10 +713,7 @@ function ProducteurDashboard() {
         daysRemaining: subscriptionInfo?.daysRemaining
       });
       
-      const response = await fetch('/api/stripe/reactivate-subscription', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      const response = await post('/api/stripe/reactivate-subscription', {});
 
       if (!response.ok) {
         const error = await response.json();
@@ -784,9 +749,7 @@ function ProducteurDashboard() {
       // Recharger les données d'abonnement
       console.log('🔄 Rechargement des données d\'abonnement...');
       try {
-        const responseSub = await fetch('/api/stripe/subscription', {
-          credentials: 'include'
-        });
+        const responseSub = await fetchAPI('/api/stripe/subscription');
         if (responseSub.ok) {
           const subData = await responseSub.json();
           console.log('📊 Nouvelles données abonnement reçues:', {
@@ -817,10 +780,7 @@ function ProducteurDashboard() {
 
   const handleDeconnexion = async () => {
     try {
-      await fetch('/api/auth/deconnexion', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      await post('/api/auth/deconnexion', {});
       navigate('/');
     } catch (error) {
       console.error('Erreur déconnexion:', error);

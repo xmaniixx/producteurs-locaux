@@ -40,9 +40,7 @@ function ProducteurCard({ producteur, villeRecherchee, onFermer }) {
 
   const verifierFavori = async () => {
     try {
-      const response = await fetch(`/api/utilisateur/favoris/${producteur.id}`, {
-        credentials: 'include'
-      });
+      const response = await fetchAPI(`/api/utilisateur/favoris/${producteur.id}`);
       if (response.ok) {
         const data = await response.json();
         setEstFavori(data.estFavori || false);
@@ -57,20 +55,14 @@ function ProducteurCard({ producteur, villeRecherchee, onFermer }) {
     try {
       if (estFavori) {
         // Retirer des favoris
-        const response = await fetch(`/api/utilisateur/favoris/${producteur.id}`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
+        const response = await del(`/api/utilisateur/favoris/${producteur.id}`);
         if (response.ok) {
           setEstFavori(false);
         }
       } else {
         // Ajouter aux favoris
-        const response = await fetch('/api/utilisateur/favoris', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ producteur_id: producteur.id })
+        const response = await post('/api/utilisateur/favoris', {
+          producteur_id: producteur.id
         });
         if (response.ok) {
           setEstFavori(true);
@@ -86,9 +78,8 @@ function ProducteurCard({ producteur, villeRecherchee, onFermer }) {
       // Enregistrer le clic sur "Y aller" si c'est un producteur enregistré
       const producteurIdStr = String(producteur.id);
       if (!producteurIdStr.startsWith('place_')) {
-        await fetch(`/api/stats/clic-y-aller/${producteur.id}`, {
-          method: 'POST',
-          credentials: 'include'
+        await fetchAPI(`/api/stats/clic-y-aller/${producteur.id}`, {
+          method: 'POST'
         });
       }
 

@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchAPI, put, del } from '../api/api';
 import Header from '../components/Header';
 import './UserAccount.css';
 
@@ -47,9 +48,7 @@ function UserAccount() {
   const chargerDonnees = async () => {
     try {
       setChargement(true);
-      const response = await fetch('/api/utilisateur/moi', {
-        credentials: 'include'
-      });
+      const response = await fetchAPI('/api/utilisateur/moi');
       
       if (!response.ok) {
         if (response.status === 401) {
@@ -125,13 +124,9 @@ function UserAccount() {
     try {
       setSauvegarde(true);
       
-      const response = await fetch('/api/utilisateur/moi', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: formData.email,
-          telephone: formData.telephone,
+      const response = await put('/api/utilisateur/moi', {
+        email: formData.email,
+        telephone: formData.telephone,
           date_naissance: formData.date_naissance,
           mot_de_passe: formData.mot_de_passe || undefined,
           nouveau_mot_de_passe: formData.nouveau_mot_de_passe || undefined
@@ -245,10 +240,7 @@ function UserAccount() {
     try {
       setSuppressionEnCours(true);
       
-      const response = await fetch('/api/utilisateur/mon-compte', {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+      const response = await del('/api/utilisateur/mon-compte');
 
       const data = await response.json();
 

@@ -144,3 +144,4 @@ Modifiez dans `manifest.json` :
 
 **C'est tout ! Votre application est maintenant installable sur mobile ! 📱**
 
+

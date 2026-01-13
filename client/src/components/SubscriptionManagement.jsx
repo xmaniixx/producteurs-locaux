@@ -3,6 +3,7 @@
 // ============================================
 
 import { useState, useEffect } from 'react';
+import { fetchAPI, post } from '../api/api';
 import './SubscriptionManagement.css';
 
 // Icônes SVG simples (remplace lucide-react)
@@ -60,9 +61,7 @@ const SubscriptionManagement = () => {
 
   const fetchSubscriptionData = async () => {
     try {
-      const response = await fetch('/api/stripe/subscription', {
-        credentials: 'include'
-      });
+      const response = await fetchAPI('/api/stripe/subscription');
       
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des données');
@@ -80,9 +79,7 @@ const SubscriptionManagement = () => {
 
   const fetchPaymentMethod = async () => {
     try {
-      const response = await fetch('/api/stripe/payment-method', {
-        credentials: 'include'
-      });
+      const response = await fetchAPI('/api/stripe/payment-method');
       
       if (response.ok) {
         const data = await response.json();
@@ -101,13 +98,7 @@ const SubscriptionManagement = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/stripe/cancel-subscription', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await post('/api/stripe/cancel-subscription', {});
 
       if (!response.ok) {
         const data = await response.json();
@@ -127,13 +118,7 @@ const SubscriptionManagement = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/stripe/reactivate-subscription', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await post('/api/stripe/reactivate-subscription', {});
 
       const data = await response.json();
 
@@ -158,13 +143,7 @@ const SubscriptionManagement = () => {
   const handleUpdatePaymentMethod = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/stripe/create-portal-session', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await post('/api/stripe/create-portal-session', {});
 
       const data = await response.json();
       
@@ -416,5 +395,6 @@ const SubscriptionManagement = () => {
 };
 
 export default SubscriptionManagement;
+
 
 

@@ -6,6 +6,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchAPI, post } from '../api/api';
 import './Header.css';
 
 function Header() {
@@ -21,9 +22,7 @@ function Header() {
 
   const verifierStatutProducteur = async () => {
     try {
-      const response = await fetch('/api/utilisateur/statut-producteur', {
-        credentials: 'include'
-      });
+      const response = await fetchAPI('/api/utilisateur/statut-producteur');
       const data = await response.json();
       setEstProducteur(data.est_producteur || false);
     } catch (error) {
@@ -48,10 +47,7 @@ function Header() {
   // Gestion de la déconnexion
   const handleDeconnexion = async () => {
     try {
-      await fetch('/api/utilisateur/deconnexion', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      await post('/api/utilisateur/deconnexion', {});
       // Réinitialiser les flags d'animation lors de la déconnexion
       sessionStorage.removeItem('currentUserId');
       sessionStorage.removeItem('introAnimationSeen');

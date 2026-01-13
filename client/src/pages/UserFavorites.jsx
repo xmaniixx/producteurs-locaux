@@ -22,9 +22,7 @@ function UserFavorites() {
   const chargerFavoris = async () => {
     try {
       setChargement(true);
-      const response = await fetch('/api/utilisateur/favoris', {
-        credentials: 'include'
-      });
+      const response = await fetchAPI('/api/utilisateur/favoris');
       
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des favoris');
@@ -48,10 +46,7 @@ function UserFavorites() {
   // Retirer des favoris
   const handleRetirerFavori = async (producteurId) => {
     try {
-      const response = await fetch(`/api/utilisateur/favoris/${producteurId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+      const response = await del(`/api/utilisateur/favoris/${producteurId}`);
 
       if (response.ok) {
         setFavoris(prev => prev.filter(f => f.producteur_id !== producteurId));

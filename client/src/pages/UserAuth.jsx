@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchAPI, post } from '../api/api';
 import './UserAuth.css';
 
 function UserAuth() {
@@ -143,9 +144,7 @@ function UserAuth() {
   useEffect(() => {
     const verifierConnexion = async () => {
       try {
-        const response = await fetch('/api/utilisateur/verifier', {
-          credentials: 'include'
-        });
+        const response = await fetchAPI('/api/utilisateur/verifier');
         
         if (!response.ok) {
           // Si l'API n'est pas disponible, rester sur la page de connexion
@@ -191,13 +190,9 @@ function UserAuth() {
 
     try {
       console.log('🔐 UserAuth - Envoi requête connexion à /api/utilisateur/connexion');
-      const response = await fetch('/api/utilisateur/connexion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, mot_de_passe: motDePasse })
+      const response = await post('/api/utilisateur/connexion', {
+        email,
+        mot_de_passe: motDePasse
       });
 
       console.log('🔐 UserAuth - Réponse reçue:', { 
@@ -354,17 +349,10 @@ Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.
     // Exemples : SendGrid, Mailgun, AWS SES, etc.
     
     try {
-      const response = await fetch('/api/utilisateur/envoyer-email-confirmation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: userEmail,
-          token: confirmationToken,
-          confirmationLink
-        })
+      const response = await post('/api/utilisateur/envoyer-email-confirmation', {
+        email: userEmail,
+        token: confirmationToken,
+        confirmationLink
       });
 
       const result = await response.json();
@@ -438,13 +426,7 @@ Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.
     setChargement(true);
 
     try {
-      const response = await fetch('/api/utilisateur/inscription', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
+      const response = await post('/api/utilisateur/inscription', {
           email,
           telephone,
           mot_de_passe: motDePasse,
@@ -642,7 +624,7 @@ Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.
                   if (newEmail.length >= 8 && emailRegex.test(newEmail)) {
                     emailCheckTimeoutRef.current = setTimeout(async () => {
                       try {
-                        const response = await fetch(`/api/utilisateur/verifier-email/${encodeURIComponent(newEmail)}`);
+                        const response = await fetchAPI(`/api/utilisateur/verifier-email/${encodeURIComponent(newEmail)}`);
                         
                         if (!response.ok) {
                           // Si 404, ignorer silencieusement (email probablement disponible)

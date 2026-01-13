@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { Autocomplete } from '@react-google-maps/api';
 import { useGoogleMaps } from '../contexts/GoogleMapsProvider';
+import { fetchAPI, put, post } from '../api/api';
 import './EditFarmPage.css';
 
 // Icônes SVG simples (remplace lucide-react)
@@ -149,10 +150,9 @@ const EditFarmPage = () => {
       console.log('🔑 Token présent ?', !!token);
       console.log('📥 Appel GET /api/producteurs/me');
       
-      const response = await fetch('/api/producteurs/me', {
+      const response = await fetchAPI('/api/producteurs/me', {
         headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
         }
       });
       
@@ -261,7 +261,7 @@ const EditFarmPage = () => {
 
       const token = localStorage.getItem('token');
       
-      const response = await fetch('/api/producteurs/upload-photo', {
+      const response = await fetchAPI('/api/producteurs/upload-photo', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formDataUpload
@@ -297,7 +297,7 @@ const EditFarmPage = () => {
     try {
       const token = localStorage.getItem('token');
       
-      await fetch('/api/producteurs/me', {
+      await fetchAPI('/api/producteurs/me', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

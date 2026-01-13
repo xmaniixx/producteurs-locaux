@@ -163,9 +163,7 @@ function ProducteurModifier() {
   const chargerDonnees = async () => {
     try {
       // Vérifier la connexion utilisateur
-      const responseAuth = await fetch('/api/utilisateur/verifier', {
-        credentials: 'include'
-      });
+      const responseAuth = await fetchAPI('/api/utilisateur/verifier');
       const dataAuth = await responseAuth.json();
 
       if (!dataAuth.connected) {
@@ -176,9 +174,7 @@ function ProducteurModifier() {
       }
 
       // Vérifier le badge producteur
-      const responseStatut = await fetch('/api/utilisateur/statut-producteur', {
-        credentials: 'include'
-      });
+      const responseStatut = await fetchAPI('/api/utilisateur/statut-producteur');
       const dataStatut = await responseStatut.json();
 
       if (!dataStatut.est_producteur) {
@@ -190,9 +186,7 @@ function ProducteurModifier() {
 
       // Récupérer les données du producteur via l'ID
       const producteurId = dataStatut.producteur_id;
-      const response = await fetch(`/api/producteurs/${producteurId}`, {
-        credentials: 'include'
-      });
+      const response = await fetchAPI(`/api/producteurs/${producteurId}`);
 
       if (!response.ok) {
         setErreur('Erreur lors du chargement des données');
@@ -276,16 +270,9 @@ function ProducteurModifier() {
 
       const horairesFormates = formaterHoraires();
       
-      const response = await fetch(`/api/producteurs/${producteurId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          ...formData,
-          horaires: horairesFormates
-        })
+      const response = await put(`/api/producteurs/${producteurId}`, {
+        ...formData,
+        horaires: horairesFormates
       });
 
       const data = await response.json();
@@ -359,10 +346,7 @@ function ProducteurModifier() {
         return;
       }
 
-      const response = await fetch(`/api/producteurs/${producteurId}/photos/${photoId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+      const response = await del(`/api/producteurs/${producteurId}/photos/${photoId}`);
 
       const data = await response.json();
 

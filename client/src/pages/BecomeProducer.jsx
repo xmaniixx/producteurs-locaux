@@ -73,9 +73,7 @@ function BecomeProducer() {
 
   const verifierStatut = async () => {
     try {
-      const response = await fetch('/api/utilisateur/statut-producteur', {
-        credentials: 'include'
-      });
+      const response = await fetchAPI('/api/utilisateur/statut-producteur');
       const data = await response.json();
 
       if (data.est_producteur) {
@@ -177,14 +175,7 @@ function BecomeProducer() {
     // Décommenter et désactiver USE_MOCK_MODE pour utiliser
     
     try {
-      const response = await fetch('/api/utilisateur/devenir-producteur', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData)
-      });
+      const response = await post('/api/utilisateur/devenir-producteur', formData);
 
       const data = await response.json();
 

@@ -195,3 +195,4 @@ SELECT id, email, est_producteur FROM utilisateurs;
 - **Cause** : Problème de permissions
 - **Solution** : Vérifier les permissions du fichier `database.db`
 
+

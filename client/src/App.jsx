@@ -5,6 +5,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { fetchAPI } from './api/api';
 import HomePage from './pages/HomePage';
 import UserAuth from './pages/UserAuth';
 import UserAccount from './pages/UserAccount';
@@ -55,9 +56,7 @@ function ProtectedRoute({ children }) {
         
         // Pas de token, vérifier la session
         console.log('🔍 ProtectedRoute - Pas de token, vérification session API');
-        const response = await fetch('/api/utilisateur/verifier', {
-          credentials: 'include'
-        });
+        const response = await fetchAPI('/api/utilisateur/verifier');
         
         console.log('🔍 ProtectedRoute - Réponse API:', { 
           status: response.status, 

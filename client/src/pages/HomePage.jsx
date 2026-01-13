@@ -7,6 +7,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import MapLayer from '../components/MapLayer';
 import UiLayer from '../components/UiLayer';
+import { fetchAPI } from '../api/api';
 import './HomePage.css';
 
 const defaultCenter = {
@@ -50,7 +51,7 @@ function HomePage() {
     setErreur('');
     
     try {
-      const response = await fetch('/api/producteurs/tous');
+      const response = await fetchAPI('/api/producteurs/tous');
       const data = await response.json();
       
       if (data.error) {
@@ -86,9 +87,7 @@ function HomePage() {
       // Pas de token, vérifier la session via API
       try {
         console.log('🏠 HomePage - Pas de token, vérification session API');
-        const response = await fetch('/api/utilisateur/verifier', {
-          credentials: 'include'
-        });
+        const response = await fetchAPI('/api/utilisateur/verifier');
         console.log('🏠 HomePage - Réponse API:', { 
           status: response.status, 
           ok: response.ok 
@@ -174,7 +173,7 @@ function HomePage() {
     try {
       const url = `/api/producteurs/rechercher?ville=${encodeURIComponent(villeTrim)}&rayon=${rayon}`;
       
-      const response = await fetch(url);
+      const response = await fetchAPI(url);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `Erreur ${response.status}` }));
@@ -259,7 +258,7 @@ function HomePage() {
   // Fonction pour charger les données à jour d'un producteur
   const chargerProducteurAjour = useCallback(async (producteurId) => {
     try {
-      const response = await fetch('/api/producteurs/tous');
+      const response = await fetchAPI('/api/producteurs/tous');
       const data = await response.json();
       
       if (data.producteurs) {
@@ -295,9 +294,8 @@ function HomePage() {
         const producteurAjour = await chargerProducteurAjour(producteur.id);
         
         try {
-          await fetch(`/api/stats/vue/${producteur.id}`, { 
-            method: 'POST',
-            credentials: 'include'
+          await fetchAPI(`/api/stats/vue/${producteur.id}`, { 
+            method: 'POST'
           });
         } catch (error) {
           console.error('Erreur enregistrement vue:', error);

@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { post } from '../api/api';
 import WelcomeProAnimation from '../components/WelcomeProAnimation';
 import './Success.css';
 
@@ -31,13 +32,8 @@ function Success() {
 
   const activateSubscription = async () => {
     try {
-      const response = await fetch('/api/stripe/verify-session', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ session_id: sessionId }),
+      const response = await post('/api/stripe/verify-session', {
+        session_id: sessionId
       });
 
       if (!response.ok) {
@@ -73,13 +69,7 @@ function Success() {
       if (err.message.includes('404') || err.message.includes('Route non trouvée')) {
         console.log('🔄 Tentative d\'activation via route alternative...');
         try {
-          const altResponse = await fetch('/api/stripe/activate-subscription', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+          const altResponse = await post('/api/stripe/activate-subscription', {});
           
           if (altResponse.ok) {
             const altData = await altResponse.json();

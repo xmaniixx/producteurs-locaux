@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { post } from '../api/api';
 import './ForgotPassword.css';
 
 function ForgotPassword() {
@@ -27,14 +28,7 @@ function ForgotPassword() {
     setChargement(true);
 
     try {
-      const response = await fetch('/api/utilisateur/reset-password/request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email })
-      });
+      const response = await post('/api/utilisateur/reset-password/request', { email });
 
       const data = await response.json();
 
@@ -73,13 +67,7 @@ function ForgotPassword() {
     setChargement(true);
 
     try {
-      const response = await fetch('/api/utilisateur/reset-password/confirm', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
+      const response = await post('/api/utilisateur/reset-password/confirm', {
           token,
           nouveau_mot_de_passe: nouveauMotDePasse
         })
@@ -225,6 +213,7 @@ function ForgotPassword() {
 }
 
 export default ForgotPassword;
+
 
 
 
