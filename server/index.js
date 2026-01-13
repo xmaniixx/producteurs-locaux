@@ -91,7 +91,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configuration des sessions pour garder les utilisateurs connectés
 // En production sur Render, frontend et backend sont sur le même domaine
-// donc on utilise 'lax' au lieu de 'none' pour sameSite
 const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
 app.use(session({
   secret: process.env.SESSION_SECRET || 'changez_cette_cle_secrete',
@@ -100,11 +99,27 @@ app.use(session({
   name: 'sessionId', // Nom du cookie de session
   cookie: { 
     secure: isProduction, // true en production avec HTTPS
-    sameSite: isProduction ? 'lax' : 'lax', // 'lax' car frontend et backend sont sur le même domaine
+    sameSite: isProduction ? 'lax' : 'lax', // 'lax' car frontend et backend sont sur le même domaine sur Render
     httpOnly: true, // Empêche l'accès JavaScript au cookie (sécurité)
-    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 jours
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
+    domain: undefined // Ne pas spécifier de domaine pour que le cookie fonctionne sur le même domaine
   }
 }));
+
+// Middleware de débogage pour les sessions (uniquement en développement ou si DEBUG_SESSION=true)
+if (process.env.DEBUG_SESSION === 'true' || !isProduction) {
+  app.use((req, res, next) => {
+    console.log('🔍 [SESSION DEBUG]', {
+      sessionID: req.sessionID,
+      utilisateurId: req.session?.utilisateurId,
+      utilisateurEmail: req.session?.utilisateurEmail,
+      cookies: req.headers.cookie,
+      origin: req.headers.origin,
+      referer: req.headers.referer
+    });
+    next();
+  });
+}
 
 // Servir les fichiers statiques du dossier uploads
 const uploadsPath = join(__dirname, '..', 'uploads');

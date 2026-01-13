@@ -148,6 +148,20 @@ router.post('/connexion', async (req, res) => {
     req.session.utilisateurId = utilisateur.id;
     req.session.utilisateurEmail = utilisateur.email;
     console.log('✅ Session créée pour utilisateur ID:', utilisateur.id);
+    console.log('🔍 [connexion] Session ID:', req.sessionID);
+    console.log('🔍 [connexion] Session sauvegardée:', {
+      utilisateurId: req.session.utilisateurId,
+      utilisateurEmail: req.session.utilisateurEmail
+    });
+    
+    // Sauvegarder explicitement la session
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ [connexion] Erreur sauvegarde session:', err);
+      } else {
+        console.log('✅ [connexion] Session sauvegardée avec succès');
+      }
+    });
 
     // Générer un token JWT
     const jwt = await import('jsonwebtoken');
@@ -701,11 +715,19 @@ router.delete('/favoris/:producteurId', (req, res) => {
 
 router.get('/statut-producteur', (req, res) => {
   try {
+    // Logs de débogage
+    console.log('🔍 [statut-producteur] Session ID:', req.sessionID);
+    console.log('🔍 [statut-producteur] Session utilisateurId:', req.session?.utilisateurId);
+    console.log('🔍 [statut-producteur] Cookies reçus:', req.headers.cookie);
+    console.log('🔍 [statut-producteur] Origin:', req.headers.origin);
+    
     if (!req.session.utilisateurId) {
+      console.log('❌ [statut-producteur] Pas d\'utilisateurId dans la session - 401');
       return res.status(401).json({ error: 'Non connecté' });
     }
 
     const utilisateurId = req.session.utilisateurId;
+    console.log('✅ [statut-producteur] Utilisateur ID trouvé:', utilisateurId);
 
     // Vérifier si l'utilisateur est déjà producteur
     const producteur = db.prepare('SELECT id FROM producteurs WHERE utilisateur_id = ?').get(utilisateurId);
