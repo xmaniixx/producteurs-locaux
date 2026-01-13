@@ -33,54 +33,29 @@ import resetSubscriptionRoutes from './routes/reset-subscription.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Configuration CORS pour permettre au frontend de communiquer avec le backend
-// En production sur Render, frontend et backend sont sur le MÊME domaine
-// donc on autorise toutes les origines du même domaine
+// ============================================
+// 1. TRUST PROXY - IMPORTANT pour Render
+// ============================================
+// Render utilise un proxy, donc on doit faire confiance au proxy
+app.set('trust proxy', 1);
+
+// ============================================
+// 2. CONFIGURATION CORS
+// ============================================
 const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // En production sur Render, frontend et backend sont sur le même domaine
-    // Donc on autorise toutes les requêtes du même domaine
-    if (isProduction) {
-      // Autoriser les requêtes sans origine (même domaine)
-      if (!origin) {
-        console.log('🌐 [CORS] Requête sans origine (même domaine - allowed)');
-        return callback(null, true);
-      }
-      
-      // Autoriser toutes les origines Render (même domaine)
-      if (origin.includes('onrender.com') || origin.includes('render.com')) {
-        console.log('✅ [CORS] Origine Render autorisée:', origin);
-        return callback(null, true);
-      }
-      
-      // Autoriser aussi les autres origines configurées
-      const allowedOrigins = [
-        process.env.FRONTEND_URL,
-        'https://producteurs-locaux.onrender.com',
-        'https://producteurs-locaux.vercel.app'
-      ].filter(Boolean);
-      
-      if (allowedOrigins.includes(origin)) {
-        console.log('✅ [CORS] Origine autorisée:', origin);
-        return callback(null, true);
-      }
-      
-      console.log('⚠️ [CORS] Origine non reconnue mais autorisée:', origin);
-      callback(null, true); // Autoriser par défaut en production (même domaine)
-    } else {
-      // En développement, autoriser toutes les origines
-      console.log('🌐 [CORS] Développement - origine autorisée:', origin || 'sans origine');
-      callback(null, true);
-    }
-  },
+  origin: isProduction 
+    ? true  // Accepte l'origine de la requête en production (même domaine sur Render)
+    : 'http://localhost:5173',
   credentials: true, // CRITIQUE : autoriser les cookies
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Set-Cookie'] // Exposer les headers de cookies
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// ============================================
+// 3. BODY PARSERS
+// ============================================
 // Webhook Stripe - DOIT être AVANT express.json() car Stripe envoie raw body
 // Le middleware express.raw() est déjà dans la route stripeWebhookRouter
 app.use('/api/stripe/webhook', stripeWebhookRouter);
@@ -89,22 +64,21 @@ app.use('/api/stripe/webhook', stripeWebhookRouter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configuration des sessions pour garder les utilisateurs connectés
-// En production sur Render, frontend et backend sont sur le même domaine
-const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
+// ============================================
+// 4. CONFIGURATION SESSION
+// ============================================
 app.use(session({
   secret: process.env.SESSION_SECRET || 'changez_cette_cle_secrete',
   resave: false,
   saveUninitialized: false,
+  proxy: true, // IMPORTANT pour Render (proxy)
   name: 'sessionId', // Nom du cookie de session
   cookie: { 
     secure: isProduction, // true en production avec HTTPS
-    sameSite: isProduction ? 'lax' : 'lax', // 'lax' car frontend et backend sont sur le même domaine
     httpOnly: true, // Empêche l'accès JavaScript au cookie (sécurité)
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
-    // NE PAS spécifier domain pour que le cookie fonctionne sur le même domaine
-    // path: '/' pour que le cookie soit disponible sur toutes les routes
-    path: '/'
+    sameSite: isProduction ? 'lax' : 'lax', // 'lax' pour le même domaine
+    maxAge: 24 * 60 * 60 * 1000, // 24 heures
+    path: '/' // Disponible sur toutes les routes
   }
 }));
 
