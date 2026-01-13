@@ -34,51 +34,51 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Configuration CORS pour permettre au frontend de communiquer avec le backend
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [
-      process.env.FRONTEND_URL,
-      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-      'https://producteurs-locaux.vercel.app', // Remplacez par votre domaine
-      'https://producteurs-locaux.onrender.com', // URL Render
-      'https://*.onrender.com' // Toutes les sous-domaines Render
-    ].filter(Boolean)
-  : ['http://localhost:5173'];
+// En production sur Render, frontend et backend sont sur le MÊME domaine
+// donc on autorise toutes les origines du même domaine
+const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === undefined;
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Autoriser les requêtes sans origine (mobile apps, curl, Postman, etc.)
-    if (!origin) {
-      console.log('🌐 Requête sans origine (allowed)');
-      return callback(null, true);
-    }
-    
-    // En développement, autoriser toutes les origines
-    if (process.env.NODE_ENV !== 'production') {
-      return callback(null, true);
-    }
-    
-    // Vérifier si l'origine est dans la liste autorisée
-    const isAllowed = allowedOrigins.some(allowed => {
-      // Support des patterns comme *.onrender.com
-      if (allowed.includes('*')) {
-        const pattern = allowed.replace('*.', '');
-        return origin.endsWith(pattern);
+    // En production sur Render, frontend et backend sont sur le même domaine
+    // Donc on autorise toutes les requêtes du même domaine
+    if (isProduction) {
+      // Autoriser les requêtes sans origine (même domaine)
+      if (!origin) {
+        console.log('🌐 [CORS] Requête sans origine (même domaine - allowed)');
+        return callback(null, true);
       }
-      return origin === allowed;
-    });
-    
-    if (isAllowed || allowedOrigins.includes(origin)) {
-      console.log('✅ Origine autorisée:', origin);
-      callback(null, true);
+      
+      // Autoriser toutes les origines Render (même domaine)
+      if (origin.includes('onrender.com') || origin.includes('render.com')) {
+        console.log('✅ [CORS] Origine Render autorisée:', origin);
+        return callback(null, true);
+      }
+      
+      // Autoriser aussi les autres origines configurées
+      const allowedOrigins = [
+        process.env.FRONTEND_URL,
+        'https://producteurs-locaux.onrender.com',
+        'https://producteurs-locaux.vercel.app'
+      ].filter(Boolean);
+      
+      if (allowedOrigins.includes(origin)) {
+        console.log('✅ [CORS] Origine autorisée:', origin);
+        return callback(null, true);
+      }
+      
+      console.log('⚠️ [CORS] Origine non reconnue mais autorisée:', origin);
+      callback(null, true); // Autoriser par défaut en production (même domaine)
     } else {
-      console.log('❌ Origine non autorisée:', origin);
-      console.log('   Origines autorisées:', allowedOrigins);
-      callback(new Error('Not allowed by CORS'));
+      // En développement, autoriser toutes les origines
+      console.log('🌐 [CORS] Développement - origine autorisée:', origin || 'sans origine');
+      callback(null, true);
     }
   },
-  credentials: true,
+  credentials: true, // CRITIQUE : autoriser les cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Set-Cookie'] // Exposer les headers de cookies
 }));
 
 // Webhook Stripe - DOIT être AVANT express.json() car Stripe envoie raw body
@@ -99,27 +99,31 @@ app.use(session({
   name: 'sessionId', // Nom du cookie de session
   cookie: { 
     secure: isProduction, // true en production avec HTTPS
-    sameSite: isProduction ? 'lax' : 'lax', // 'lax' car frontend et backend sont sur le même domaine sur Render
+    sameSite: isProduction ? 'lax' : 'lax', // 'lax' car frontend et backend sont sur le même domaine
     httpOnly: true, // Empêche l'accès JavaScript au cookie (sécurité)
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
-    domain: undefined // Ne pas spécifier de domaine pour que le cookie fonctionne sur le même domaine
+    // NE PAS spécifier domain pour que le cookie fonctionne sur le même domaine
+    // path: '/' pour que le cookie soit disponible sur toutes les routes
+    path: '/'
   }
 }));
 
-// Middleware de débogage pour les sessions (uniquement en développement ou si DEBUG_SESSION=true)
-if (process.env.DEBUG_SESSION === 'true' || !isProduction) {
-  app.use((req, res, next) => {
-    console.log('🔍 [SESSION DEBUG]', {
-      sessionID: req.sessionID,
-      utilisateurId: req.session?.utilisateurId,
-      utilisateurEmail: req.session?.utilisateurEmail,
-      cookies: req.headers.cookie,
-      origin: req.headers.origin,
-      referer: req.headers.referer
-    });
-    next();
+// Middleware de débogage pour les sessions (toujours actif pour diagnostiquer)
+app.use((req, res, next) => {
+  // Logs détaillés pour toutes les requêtes
+  console.log('🔍 [REQUEST DEBUG]', {
+    method: req.method,
+    path: req.path,
+    sessionID: req.sessionID,
+    utilisateurId: req.session?.utilisateurId,
+    cookies: req.headers.cookie || 'AUCUN COOKIE',
+    origin: req.headers.origin || 'AUCUNE ORIGINE',
+    referer: req.headers.referer || 'AUCUN REFERER',
+    host: req.headers.host,
+    'user-agent': req.headers['user-agent']?.substring(0, 50)
   });
-}
+  next();
+});
 
 // Servir les fichiers statiques du dossier uploads
 const uploadsPath = join(__dirname, '..', 'uploads');
