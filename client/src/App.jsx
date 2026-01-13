@@ -50,10 +50,21 @@ function ProtectedRoute({ children }) {
         const response = await fetch('/api/utilisateur/verifier', {
           credentials: 'include'
         });
-        const data = await response.json();
-        setIsAuthenticated(data.connected || false);
         
-        if (!data.connected) {
+        // Vérifier si la réponse est OK avant de parser JSON
+        if (!response.ok) {
+          // Si l'API retourne une erreur, rediriger vers la connexion
+          setIsAuthenticated(false);
+          setIsChecking(false);
+          navigate('/connexion', { replace: true });
+          return;
+        }
+        
+        const data = await response.json();
+        const connected = data.connected || false;
+        setIsAuthenticated(connected);
+        
+        if (!connected) {
           navigate('/connexion', { replace: true });
         }
       } catch (error) {
@@ -63,6 +74,7 @@ function ProtectedRoute({ children }) {
         if (token) {
           setIsAuthenticated(true);
         } else {
+          setIsAuthenticated(false);
           navigate('/connexion', { replace: true });
         }
       } finally {
@@ -92,7 +104,25 @@ function ProtectedRoute({ children }) {
   }
 
   // Si authentifié, afficher le contenu protégé
-  return isAuthenticated ? children : null;
+  // Sinon, afficher le loader (ne jamais retourner null pour éviter les pages blanches)
+  if (!isAuthenticated) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        background: 'linear-gradient(135deg, var(--vert-tres-clair) 0%, var(--vert-clair) 50%, var(--vert-principal) 100%)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌾</div>
+          <div style={{ color: '#114248', fontWeight: '600' }}>Redirection...</div>
+        </div>
+      </div>
+    );
+  }
+
+  return children;
 }
 
 function AppContent() {

@@ -3,8 +3,10 @@ const isProduction = import.meta.env.PROD;
 const isDevelopment = import.meta.env.DEV;
 
 // URL de l'API backend
+// En production sur Render, frontend et backend sont sur le même domaine
+// donc on utilise des URLs relatives
 export const API_URL = isProduction
-  ? import.meta.env.VITE_API_URL || 'https://votre-backend.railway.app'
+  ? '' // URL relative - même domaine que le frontend
   : 'http://localhost:3001';
 
 // Clé API Google Maps
@@ -16,4 +18,5 @@ export default {
   isProduction,
   isDevelopment
 };
+
 
