@@ -15,6 +15,7 @@ const defaultCenter = {
 };
 
 function HomePage() {
+  console.log('🏠 HomePage - Rendu du composant');
   const [utilisateurConnecte, setUtilisateurConnecte] = useState(false);
   // Vérifier si l'animation a déjà été vue pour cet utilisateur dans cette session
   const [showIntro, setShowIntro] = useState(() => {
@@ -22,8 +23,10 @@ function HomePage() {
     const lastSeenUserId = sessionStorage.getItem('introAnimationUserId');
     // Si l'utilisateur a changé ou si c'est la première visite, afficher l'animation
     if (!currentUserId || currentUserId !== lastSeenUserId) {
+      console.log('🏠 HomePage - Animation intro activée');
       return true;
     }
+    console.log('🏠 HomePage - Animation intro désactivée (déjà vue)');
     return false;
   });
   const [ville, setVille] = useState('');
@@ -66,28 +69,41 @@ function HomePage() {
 
   // Vérifier si l'utilisateur est connecté
   useEffect(() => {
+    console.log('🏠 HomePage - useEffect verifierConnexion déclenché');
     const verifierConnexion = async () => {
+      console.log('🏠 HomePage - Début verifierConnexion');
       try {
         const response = await fetch('/api/utilisateur/verifier', {
           credentials: 'include'
         });
+        console.log('🏠 HomePage - Réponse API:', { 
+          status: response.status, 
+          ok: response.ok 
+        });
         const data = await response.json();
-        setUtilisateurConnecte(data.connected || false);
+        console.log('🏠 HomePage - Données API:', data);
+        const connected = data.connected || false;
+        console.log('🏠 HomePage - Utilisateur connecté:', connected);
+        setUtilisateurConnecte(connected);
         
         // Si l'utilisateur est connecté, vérifier si c'est un nouvel utilisateur
         if (data.connected && data.utilisateur && data.utilisateur.id) {
+          console.log('🏠 HomePage - Utilisateur trouvé:', data.utilisateur.id);
           const currentUserId = String(data.utilisateur.id);
           const lastSeenUserId = sessionStorage.getItem('introAnimationUserId');
           
           // Si c'est un nouvel utilisateur (ID différent), réinitialiser l'animation
           if (currentUserId !== lastSeenUserId) {
+            console.log('🏠 HomePage - Nouvel utilisateur détecté, réinitialisation animation');
             sessionStorage.setItem('currentUserId', currentUserId);
             sessionStorage.removeItem('introAnimationSeen');
             setShowIntro(true);
           }
+        } else {
+          console.log('🏠 HomePage - Pas d\'utilisateur dans la réponse');
         }
       } catch (error) {
-        console.error('Erreur vérification connexion:', error);
+        console.error('❌ HomePage - Erreur vérification connexion:', error);
         setUtilisateurConnecte(false);
       }
     };
@@ -419,8 +435,24 @@ function HomePage() {
 
   // Ne rien afficher si l'utilisateur n'est pas connecté
   if (!utilisateurConnecte) {
-    return null;
+    console.log('🏠 HomePage - utilisateurConnecte=false, affichage loader');
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        background: 'linear-gradient(135deg, var(--vert-tres-clair) 0%, var(--vert-clair) 50%, var(--vert-principal) 100%)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌾</div>
+          <div style={{ color: '#114248', fontWeight: '600', fontSize: '24px' }}>⏳ Vérification de l'authentification...</div>
+        </div>
+      </div>
+    );
   }
+
+  console.log('🏠 HomePage - utilisateurConnecte=true, affichage du contenu');
 
   return (
     <div className="app-root">

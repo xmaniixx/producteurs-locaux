@@ -33,27 +33,42 @@ function ProtectedRoute({ children }) {
   const [isChecking, setIsChecking] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  console.log('🔍 ProtectedRoute - Rendu initial', { isChecking, isAuthenticated });
+
   useEffect(() => {
+    console.log('🔍 ProtectedRoute - useEffect déclenché');
     const checkAuth = async () => {
+      console.log('🔍 ProtectedRoute - Début checkAuth');
       try {
         // Vérifier d'abord le JWT dans localStorage (simple et efficace)
         const token = localStorage.getItem('token');
+        console.log('🔍 ProtectedRoute - Token localStorage:', token ? '✅ Présent' : '❌ Absent');
         
         if (token) {
           // Si token présent, on considère l'utilisateur comme authentifié
+          console.log('🔍 ProtectedRoute - Token trouvé, authentification automatique');
           setIsAuthenticated(true);
           setIsChecking(false);
+          console.log('🔍 ProtectedRoute - État mis à jour: isAuthenticated=true, isChecking=false');
           return;
         }
         
         // Pas de token, vérifier la session
+        console.log('🔍 ProtectedRoute - Pas de token, vérification session API');
         const response = await fetch('/api/utilisateur/verifier', {
           credentials: 'include'
+        });
+        
+        console.log('🔍 ProtectedRoute - Réponse API:', { 
+          status: response.status, 
+          ok: response.ok,
+          statusText: response.statusText 
         });
         
         // Vérifier si la réponse est OK avant de parser JSON
         if (!response.ok) {
           // Si l'API retourne une erreur, rediriger vers la connexion
+          console.log('❌ ProtectedRoute - API retourne erreur, redirection vers /connexion');
           setIsAuthenticated(false);
           setIsChecking(false);
           navigate('/connexion', { replace: true });
@@ -61,23 +76,31 @@ function ProtectedRoute({ children }) {
         }
         
         const data = await response.json();
+        console.log('🔍 ProtectedRoute - Données API:', data);
         const connected = data.connected || false;
+        console.log('🔍 ProtectedRoute - Utilisateur connecté:', connected);
         setIsAuthenticated(connected);
         
         if (!connected) {
+          console.log('❌ ProtectedRoute - Utilisateur non connecté, redirection vers /connexion');
           navigate('/connexion', { replace: true });
+        } else {
+          console.log('✅ ProtectedRoute - Utilisateur connecté, authentification OK');
         }
       } catch (error) {
-        console.error('Erreur vérification authentification:', error);
+        console.error('❌ ProtectedRoute - Erreur vérification authentification:', error);
         // En cas d'erreur, vérifier le token comme fallback
         const token = localStorage.getItem('token');
         if (token) {
+          console.log('🔍 ProtectedRoute - Erreur mais token présent, authentification fallback');
           setIsAuthenticated(true);
         } else {
+          console.log('❌ ProtectedRoute - Erreur et pas de token, redirection vers /connexion');
           setIsAuthenticated(false);
           navigate('/connexion', { replace: true });
         }
       } finally {
+        console.log('🔍 ProtectedRoute - Fin checkAuth, setIsChecking(false)');
         setIsChecking(false);
       }
     };
@@ -87,6 +110,7 @@ function ProtectedRoute({ children }) {
 
   // Afficher un loader pendant la vérification
   if (isChecking) {
+    console.log('⏳ ProtectedRoute - Affichage du loader (isChecking=true)');
     return (
       <div style={{ 
         display: 'flex', 
@@ -97,7 +121,7 @@ function ProtectedRoute({ children }) {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌾</div>
-          <div style={{ color: '#114248', fontWeight: '600' }}>Chargement...</div>
+          <div style={{ color: '#114248', fontWeight: '600', fontSize: '24px' }}>⏳ Chargement en cours...</div>
         </div>
       </div>
     );
@@ -106,6 +130,7 @@ function ProtectedRoute({ children }) {
   // Si authentifié, afficher le contenu protégé
   // Sinon, afficher le loader (ne jamais retourner null pour éviter les pages blanches)
   if (!isAuthenticated) {
+    console.log('❌ ProtectedRoute - Pas authentifié, affichage loader redirection');
     return (
       <div style={{ 
         display: 'flex', 
@@ -116,17 +141,20 @@ function ProtectedRoute({ children }) {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌾</div>
-          <div style={{ color: '#114248', fontWeight: '600' }}>Redirection...</div>
+          <div style={{ color: '#114248', fontWeight: '600', fontSize: '24px' }}>🔄 Redirection...</div>
         </div>
       </div>
     );
   }
 
+  console.log('✅ ProtectedRoute - Utilisateur authentifié, affichage children');
   return children;
 }
 
 function AppContent() {
   const location = useLocation();
+  
+  console.log('🌐 AppContent - Rendu, location:', location.pathname);
   
   return (
     <div className="app">

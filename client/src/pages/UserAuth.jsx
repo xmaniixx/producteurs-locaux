@@ -185,10 +185,12 @@ function UserAuth() {
   // Gestion de la connexion
   const handleConnexion = async (e) => {
     e.preventDefault();
+    console.log('🔐 UserAuth - Début handleConnexion');
     setErreur('');
     setChargement(true);
 
     try {
+      console.log('🔐 UserAuth - Envoi requête connexion à /api/utilisateur/connexion');
       const response = await fetch('/api/utilisateur/connexion', {
         method: 'POST',
         headers: {
@@ -198,9 +200,16 @@ function UserAuth() {
         body: JSON.stringify({ email, mot_de_passe: motDePasse })
       });
 
+      console.log('🔐 UserAuth - Réponse reçue:', { 
+        status: response.status, 
+        ok: response.ok,
+        statusText: response.statusText 
+      });
+
       if (!response.ok) {
         // Si le serveur ne répond pas (ECONNREFUSED)
         if (response.status === 0 || response.status >= 500) {
+          console.error('❌ UserAuth - Erreur serveur:', response.status);
           setErreur('Le serveur backend n\'est pas accessible. Vérifiez qu\'il est démarré sur le port 3001.');
           setChargement(false);
           return;
@@ -208,20 +217,28 @@ function UserAuth() {
       }
 
       const data = await response.json();
+      console.log('🔐 UserAuth - Données reçues:', data);
 
       if (data.error) {
+        console.error('❌ UserAuth - Erreur dans la réponse:', data.error);
         setErreur(data.error);
       } else if (data.success) {
+        console.log('✅ UserAuth - Connexion réussie');
         // Stocker le token JWT dans localStorage
         if (data.token) {
           localStorage.setItem('token', data.token);
-          console.log('✅ Token JWT stocké');
+          console.log('✅ UserAuth - Token JWT stocké dans localStorage');
+        } else {
+          console.warn('⚠️ UserAuth - Pas de token dans la réponse');
         }
         // Rediriger vers l'accueil
+        console.log('🔐 UserAuth - Redirection vers /');
         navigate('/');
+      } else {
+        console.warn('⚠️ UserAuth - Réponse inattendue:', data);
       }
     } catch (error) {
-      console.error('Erreur connexion:', error);
+      console.error('❌ UserAuth - Erreur connexion:', error);
       // Détecter spécifiquement les erreurs de connexion réseau
       if (error.message && (error.message.includes('Failed to fetch') || error.message.includes('ECONNREFUSED'))) {
         setErreur('❌ Le serveur backend n\'est pas accessible. Assurez-vous que le serveur est démarré avec "npm run dev:server" ou "npm run dev".');
@@ -229,6 +246,7 @@ function UserAuth() {
         setErreur('Erreur de connexion. Vérifiez votre connexion internet et réessayez.');
       }
     } finally {
+      console.log('🔐 UserAuth - Fin handleConnexion, setChargement(false)');
       setChargement(false);
     }
   };
